@@ -4,6 +4,21 @@
     "uf": "Rondônia",
     "uf_sigla": "RO"
   },
+  "110004": {
+    "cidade": "Cacoal",
+    "uf": "Rondônia",
+    "uf_sigla": "RO"
+  },
+  "110011": {
+    "cidade": "Jaru",
+    "uf": "Rondônia",
+    "uf_sigla": "RO"
+  },
+  "110015": {
+    "cidade": "Ouro Preto do Oeste",
+    "uf": "Rondônia",
+    "uf_sigla": "RO"
+  },
   "110020": {
     "cidade": "Porto Velho",
     "uf": "Rondônia",
@@ -19,6 +34,31 @@
     "uf": "Rondônia",
     "uf_sigla": "RO"
   },
+  "110140": {
+    "cidade": "Monte Negro",
+    "uf": "Rondônia",
+    "uf_sigla": "RO"
+  },
+  "120010": {
+    "cidade": "Brasiléia",
+    "uf": "Acre",
+    "uf_sigla": "AC"
+  },
+  "120040": {
+    "cidade": "Rio Branco",
+    "uf": "Acre",
+    "uf_sigla": "AC"
+  },
+  "130170": {
+    "cidade": "Humaitá",
+    "uf": "Amazonas",
+    "uf_sigla": "AM"
+  },
+  "130190": {
+    "cidade": "Itacoatiara",
+    "uf": "Amazonas",
+    "uf_sigla": "AM"
+  },
   "130250": {
     "cidade": "Manacapuru",
     "uf": "Amazonas",
@@ -26,6 +66,11 @@
   },
   "130260": {
     "cidade": "Manaus",
+    "uf": "Amazonas",
+    "uf_sigla": "AM"
+  },
+  "130340": {
+    "cidade": "Parintins",
     "uf": "Amazonas",
     "uf_sigla": "AM"
   },
@@ -49,13 +94,43 @@
     "uf": "Roraima",
     "uf_sigla": "RR"
   },
+  "150060": {
+    "cidade": "Altamira",
+    "uf": "Pará",
+    "uf_sigla": "PA"
+  },
   "150140": {
     "cidade": "Belém",
     "uf": "Pará",
     "uf_sigla": "PA"
   },
+  "150170": {
+    "cidade": "Bragança",
+    "uf": "Pará",
+    "uf_sigla": "PA"
+  },
+  "150180": {
+    "cidade": "Breves",
+    "uf": "Pará",
+    "uf_sigla": "PA"
+  },
+  "150210": {
+    "cidade": "Cametá",
+    "uf": "Pará",
+    "uf_sigla": "PA"
+  },
   "150220": {
     "cidade": "Capanema",
+    "uf": "Pará",
+    "uf_sigla": "PA"
+  },
+  "150240": {
+    "cidade": "Castanhal",
+    "uf": "Pará",
+    "uf_sigla": "PA"
+  },
+  "150380": {
+    "cidade": "Jacundá",
     "uf": "Pará",
     "uf_sigla": "PA"
   },
@@ -69,6 +144,16 @@
     "uf": "Pará",
     "uf_sigla": "PA"
   },
+  "150580": {
+    "cidade": "Portel",
+    "uf": "Pará",
+    "uf_sigla": "PA"
+  },
+  "150680": {
+    "cidade": "Santarém",
+    "uf": "Pará",
+    "uf_sigla": "PA"
+  },
   "150803": {
     "cidade": "Tracuateua",
     "uf": "Pará",
@@ -79,13 +164,43 @@
     "uf": "Pará",
     "uf_sigla": "PA"
   },
+  "160027": {
+    "cidade": "Laranjal do Jari",
+    "uf": "Amapá",
+    "uf_sigla": "AP"
+  },
   "160030": {
     "cidade": "Macapá",
     "uf": "Amapá",
     "uf_sigla": "AP"
   },
+  "160060": {
+    "cidade": "Santana",
+    "uf": "Amapá",
+    "uf_sigla": "AP"
+  },
+  "170210": {
+    "cidade": "Araguaína",
+    "uf": "Tocantins",
+    "uf_sigla": "TO"
+  },
+  "170255": {
+    "cidade": "Augustinópolis",
+    "uf": "Tocantins",
+    "uf_sigla": "TO"
+  },
   "210005": {
     "cidade": "Açailândia",
+    "uf": "Maranhão",
+    "uf_sigla": "MA"
+  },
+  "210120": {
+    "cidade": "Bacabal",
+    "uf": "Maranhão",
+    "uf_sigla": "MA"
+  },
+  "210170": {
+    "cidade": "Barreirinhas",
     "uf": "Maranhão",
     "uf_sigla": "MA"
   },
@@ -99,6 +214,16 @@
     "uf": "Maranhão",
     "uf_sigla": "MA"
   },
+  "210330": {
+    "cidade": "Codó",
+    "uf": "Maranhão",
+    "uf_sigla": "MA"
+  },
+  "210360": {
+    "cidade": "Coroatá",
+    "uf": "Maranhão",
+    "uf_sigla": "MA"
+  },
   "210530": {
     "cidade": "Imperatriz",
     "uf": "Maranhão",
@@ -109,13 +234,33 @@
     "uf": "Maranhão",
     "uf_sigla": "MA"
   },
+  "210675": {
+    "cidade": "Miranda do Norte",
+    "uf": "Maranhão",
+    "uf_sigla": "MA"
+  },
   "210820": {
     "cidade": "Pedreiras",
     "uf": "Maranhão",
     "uf_sigla": "MA"
   },
+  "210845": {
+    "cidade": "Peritoró",
+    "uf": "Maranhão",
+    "uf_sigla": "MA"
+  },
   "210860": {
     "cidade": "Pinheiro",
+    "uf": "Maranhão",
+    "uf_sigla": "MA"
+  },
+  "210910": {
+    "cidade": "Presidente Dutra",
+    "uf": "Maranhão",
+    "uf_sigla": "MA"
+  },
+  "210990": {
+    "cidade": "Santa Inês",
     "uf": "Maranhão",
     "uf_sigla": "MA"
   },
@@ -129,10 +274,20 @@
     "uf": "Maranhão",
     "uf_sigla": "MA"
   },
+  "211210": {
+    "cidade": "Timbiras",
+    "uf": "Maranhão",
+    "uf_sigla": "MA"
+  },
   "211220": {
     "cidade": "Timon",
     "uf": "Maranhão",
     "uf_sigla": "MA"
+  },
+  "220190": {
+    "cidade": "Bom Jesus",
+    "uf": "Piauí",
+    "uf_sigla": "PI"
   },
   "220220": {
     "cidade": "Campo Maior",
@@ -154,8 +309,18 @@
     "uf": "Piauí",
     "uf_sigla": "PI"
   },
+  "220790": {
+    "cidade": "Pedro II",
+    "uf": "Piauí",
+    "uf_sigla": "PI"
+  },
   "220800": {
     "cidade": "Picos",
+    "uf": "Piauí",
+    "uf_sigla": "PI"
+  },
+  "220830": {
+    "cidade": "Piracuruca",
     "uf": "Piauí",
     "uf_sigla": "PI"
   },
@@ -174,6 +339,11 @@
     "uf": "Piauí",
     "uf_sigla": "PI"
   },
+  "221110": {
+    "cidade": "União",
+    "uf": "Piauí",
+    "uf_sigla": "PI"
+  },
   "221130": {
     "cidade": "Valença do Piauí",
     "uf": "Piauí",
@@ -181,6 +351,11 @@
   },
   "230020": {
     "cidade": "Acaraú",
+    "uf": "Ceará",
+    "uf_sigla": "CE"
+  },
+  "230110": {
+    "cidade": "Aracati",
     "uf": "Ceará",
     "uf_sigla": "CE"
   },
@@ -224,6 +399,11 @@
     "uf": "Ceará",
     "uf_sigla": "CE"
   },
+  "230523": {
+    "cidade": "Horizonte",
+    "uf": "Ceará",
+    "uf_sigla": "CE"
+  },
   "230540": {
     "cidade": "Icó",
     "uf": "Ceará",
@@ -239,6 +419,16 @@
     "uf": "Ceará",
     "uf_sigla": "CE"
   },
+  "230730": {
+    "cidade": "Juazeiro do Norte",
+    "uf": "Ceará",
+    "uf_sigla": "CE"
+  },
+  "230760": {
+    "cidade": "Limoeiro do Norte",
+    "uf": "Ceará",
+    "uf_sigla": "CE"
+  },
   "230765": {
     "cidade": "Maracanaú",
     "uf": "Ceará",
@@ -249,8 +439,23 @@
     "uf": "Ceará",
     "uf_sigla": "CE"
   },
+  "230830": {
+    "cidade": "Milagres",
+    "uf": "Ceará",
+    "uf_sigla": "CE"
+  },
+  "230840": {
+    "cidade": "Missão Velha",
+    "uf": "Ceará",
+    "uf_sigla": "CE"
+  },
   "231130": {
     "cidade": "Quixadá",
+    "uf": "Ceará",
+    "uf_sigla": "CE"
+  },
+  "231140": {
+    "cidade": "Quixeramobim",
     "uf": "Ceará",
     "uf_sigla": "CE"
   },
@@ -259,8 +464,18 @@
     "uf": "Ceará",
     "uf_sigla": "CE"
   },
+  "231240": {
+    "cidade": "São Gonçalo do Amarante",
+    "uf": "Ceará",
+    "uf_sigla": "CE"
+  },
   "231290": {
     "cidade": "Sobral",
+    "uf": "Ceará",
+    "uf_sigla": "CE"
+  },
+  "231330": {
+    "cidade": "Tauá",
     "uf": "Ceará",
     "uf_sigla": "CE"
   },
@@ -279,6 +494,16 @@
     "uf": "Rio Grande do Norte",
     "uf_sigla": "RN"
   },
+  "240060": {
+    "cidade": "Almino Afonso",
+    "uf": "Rio Grande do Norte",
+    "uf_sigla": "RN"
+  },
+  "240100": {
+    "cidade": "Apodi",
+    "uf": "Rio Grande do Norte",
+    "uf_sigla": "RN"
+  },
   "240200": {
     "cidade": "Caicó",
     "uf": "Rio Grande do Norte",
@@ -289,8 +514,23 @@
     "uf": "Rio Grande do Norte",
     "uf_sigla": "RN"
   },
+  "240310": {
+    "cidade": "Currais Novos",
+    "uf": "Rio Grande do Norte",
+    "uf_sigla": "RN"
+  },
+  "240325": {
+    "cidade": "Parnamirim",
+    "uf": "Rio Grande do Norte",
+    "uf_sigla": "RN"
+  },
   "240580": {
     "cidade": "João Câmara",
+    "uf": "Rio Grande do Norte",
+    "uf_sigla": "RN"
+  },
+  "240710": {
+    "cidade": "Macaíba",
     "uf": "Rio Grande do Norte",
     "uf_sigla": "RN"
   },
@@ -309,6 +549,11 @@
     "uf": "Rio Grande do Norte",
     "uf_sigla": "RN"
   },
+  "241150": {
+    "cidade": "Santo Antônio",
+    "uf": "Rio Grande do Norte",
+    "uf_sigla": "RN"
+  },
   "241220": {
     "cidade": "São José de Mipibu",
     "uf": "Rio Grande do Norte",
@@ -319,13 +564,73 @@
     "uf": "Rio Grande do Norte",
     "uf_sigla": "RN"
   },
+  "241410": {
+    "cidade": "Tenente Ananias",
+    "uf": "Rio Grande do Norte",
+    "uf_sigla": "RN"
+  },
+  "250180": {
+    "cidade": "Bayeux",
+    "uf": "Paraíba",
+    "uf_sigla": "PB"
+  },
+  "250370": {
+    "cidade": "Cajazeiras",
+    "uf": "Paraíba",
+    "uf_sigla": "PB"
+  },
+  "250400": {
+    "cidade": "Campina Grande",
+    "uf": "Paraíba",
+    "uf_sigla": "PB"
+  },
+  "250510": {
+    "cidade": "Cuité",
+    "uf": "Paraíba",
+    "uf_sigla": "PB"
+  },
+  "250630": {
+    "cidade": "Guarabira",
+    "uf": "Paraíba",
+    "uf_sigla": "PB"
+  },
+  "250690": {
+    "cidade": "Itabaiana",
+    "uf": "Paraíba",
+    "uf_sigla": "PB"
+  },
   "250750": {
     "cidade": "João Pessoa",
     "uf": "Paraíba",
     "uf_sigla": "PB"
   },
+  "250890": {
+    "cidade": "Mamanguape",
+    "uf": "Paraíba",
+    "uf_sigla": "PB"
+  },
   "251080": {
     "cidade": "Patos",
+    "uf": "Paraíba",
+    "uf_sigla": "PB"
+  },
+  "251130": {
+    "cidade": "Piancó",
+    "uf": "Paraíba",
+    "uf_sigla": "PB"
+  },
+  "251140": {
+    "cidade": "Picuí",
+    "uf": "Paraíba",
+    "uf_sigla": "PB"
+  },
+  "251210": {
+    "cidade": "Pombal",
+    "uf": "Paraíba",
+    "uf_sigla": "PB"
+  },
+  "251370": {
+    "cidade": "Santa Rita",
     "uf": "Paraíba",
     "uf_sigla": "PB"
   },
@@ -339,6 +644,21 @@
     "uf": "Pernambuco",
     "uf_sigla": "PE"
   },
+  "260020": {
+    "cidade": "Afrânio",
+    "uf": "Pernambuco",
+    "uf_sigla": "PE"
+  },
+  "260345": {
+    "cidade": "Camaragibe",
+    "uf": "Pernambuco",
+    "uf_sigla": "PE"
+  },
+  "260790": {
+    "cidade": "Jaboatão dos Guararapes",
+    "uf": "Pernambuco",
+    "uf_sigla": "PE"
+  },
   "260990": {
     "cidade": "Ouricuri",
     "uf": "Pernambuco",
@@ -346,6 +666,11 @@
   },
   "261000": {
     "cidade": "Palmares",
+    "uf": "Pernambuco",
+    "uf_sigla": "PE"
+  },
+  "261110": {
+    "cidade": "Petrolina",
     "uf": "Pernambuco",
     "uf_sigla": "PE"
   },
@@ -384,8 +709,23 @@
     "uf": "Bahia",
     "uf_sigla": "BA"
   },
+  "290390": {
+    "cidade": "Bom Jesus da Lapa",
+    "uf": "Bahia",
+    "uf_sigla": "BA"
+  },
+  "290460": {
+    "cidade": "Brumado",
+    "uf": "Bahia",
+    "uf_sigla": "BA"
+  },
   "291072": {
     "cidade": "Eunápolis",
+    "uf": "Bahia",
+    "uf_sigla": "BA"
+  },
+  "291080": {
+    "cidade": "Feira de Santana",
     "uf": "Bahia",
     "uf_sigla": "BA"
   },
@@ -409,8 +749,23 @@
     "uf": "Bahia",
     "uf_sigla": "BA"
   },
+  "291800": {
+    "cidade": "Jequié",
+    "uf": "Bahia",
+    "uf_sigla": "BA"
+  },
   "291840": {
     "cidade": "Juazeiro",
+    "uf": "Bahia",
+    "uf_sigla": "BA"
+  },
+  "292400": {
+    "cidade": "Paulo Afonso",
+    "uf": "Bahia",
+    "uf_sigla": "BA"
+  },
+  "292740": {
+    "cidade": "Salvador",
     "uf": "Bahia",
     "uf_sigla": "BA"
   },
@@ -449,13 +804,48 @@
     "uf": "Minas Gerais",
     "uf_sigla": "MG"
   },
+  "310340": {
+    "cidade": "Araçuaí",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "310350": {
+    "cidade": "Araguari",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "310560": {
+    "cidade": "Barbacena",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
   "310620": {
     "cidade": "Belo Horizonte",
     "uf": "Minas Gerais",
     "uf_sigla": "MG"
   },
+  "310670": {
+    "cidade": "Betim",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
   "310730": {
     "cidade": "Bocaiúva",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "310860": {
+    "cidade": "Brasília de Minas",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "311030": {
+    "cidade": "Caldas",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "311180": {
+    "cidade": "Canápolis",
     "uf": "Minas Gerais",
     "uf_sigla": "MG"
   },
@@ -469,8 +859,18 @@
     "uf": "Minas Gerais",
     "uf_sigla": "MG"
   },
+  "311800": {
+    "cidade": "Congonhas",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
   "311940": {
     "cidade": "Coronel Fabriciano",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "312140": {
+    "cidade": "Desterro de Entre Rios",
     "uf": "Minas Gerais",
     "uf_sigla": "MG"
   },
@@ -479,8 +879,28 @@
     "uf": "Minas Gerais",
     "uf_sigla": "MG"
   },
+  "312430": {
+    "cidade": "Espinosa",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
   "312670": {
     "cidade": "Francisco Sá",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "312870": {
+    "cidade": "Guaxupé",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "312930": {
+    "cidade": "Iapu",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "313120": {
+    "cidade": "Ipanema",
     "uf": "Minas Gerais",
     "uf_sigla": "MG"
   },
@@ -489,13 +909,73 @@
     "uf": "Minas Gerais",
     "uf_sigla": "MG"
   },
+  "313250": {
+    "cidade": "Itamarandiba",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "313490": {
+    "cidade": "Jacutinga",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
   "313520": {
     "cidade": "Januária",
     "uf": "Minas Gerais",
     "uf_sigla": "MG"
   },
+  "313670": {
+    "cidade": "Juiz de Fora",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "313820": {
+    "cidade": "Lavras",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
   "313868": {
     "cidade": "Luislândia",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "314160": {
+    "cidade": "Mercês",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "314180": {
+    "cidade": "Minas Novas",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "314200": {
+    "cidade": "Mirabela",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "314270": {
+    "cidade": "Montalvânia",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "314290": {
+    "cidade": "Monte Azul",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "314330": {
+    "cidade": "Montes Claros",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "314700": {
+    "cidade": "Paracatu",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "314710": {
+    "cidade": "Pará de Minas",
     "uf": "Minas Gerais",
     "uf_sigla": "MG"
   },
@@ -509,8 +989,28 @@
     "uf": "Minas Gerais",
     "uf_sigla": "MG"
   },
+  "315057": {
+    "cidade": "Pintópolis",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "315170": {
+    "cidade": "Poço Fundo",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
   "315220": {
     "cidade": "Porteirinha",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "315580": {
+    "cidade": "Rio Pomba",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "316070": {
+    "cidade": "Santos Dumont",
     "uf": "Minas Gerais",
     "uf_sigla": "MG"
   },
@@ -519,8 +1019,23 @@
     "uf": "Minas Gerais",
     "uf_sigla": "MG"
   },
+  "316290": {
+    "cidade": "São João Nepomuceno",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "316720": {
+    "cidade": "Sete Lagoas",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
   "316860": {
     "cidade": "Teófilo Otoni",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "316970": {
+    "cidade": "Turmalina",
     "uf": "Minas Gerais",
     "uf_sigla": "MG"
   },
@@ -534,13 +1049,93 @@
     "uf": "Minas Gerais",
     "uf_sigla": "MG"
   },
+  "317040": {
+    "cidade": "Unaí",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "317052": {
+    "cidade": "Urucuia",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
   "317080": {
     "cidade": "Várzea da Palma",
     "uf": "Minas Gerais",
     "uf_sigla": "MG"
   },
+  "320530": {
+    "cidade": "Vitória",
+    "uf": "Espírito Santo",
+    "uf_sigla": "ES"
+  },
+  "330023": {
+    "cidade": "Armação dos Búzios",
+    "uf": "Rio de Janeiro",
+    "uf_sigla": "RJ"
+  },
+  "330070": {
+    "cidade": "Cabo Frio",
+    "uf": "Rio de Janeiro",
+    "uf_sigla": "RJ"
+  },
+  "330100": {
+    "cidade": "Campos dos Goytacazes",
+    "uf": "Rio de Janeiro",
+    "uf_sigla": "RJ"
+  },
+  "330190": {
+    "cidade": "Itaboraí",
+    "uf": "Rio de Janeiro",
+    "uf_sigla": "RJ"
+  },
+  "330220": {
+    "cidade": "Itaperuna",
+    "uf": "Rio de Janeiro",
+    "uf_sigla": "RJ"
+  },
+  "330240": {
+    "cidade": "Macaé",
+    "uf": "Rio de Janeiro",
+    "uf_sigla": "RJ"
+  },
+  "330270": {
+    "cidade": "Maricá",
+    "uf": "Rio de Janeiro",
+    "uf_sigla": "RJ"
+  },
   "330330": {
     "cidade": "Niterói",
+    "uf": "Rio de Janeiro",
+    "uf_sigla": "RJ"
+  },
+  "330340": {
+    "cidade": "Nova Friburgo",
+    "uf": "Rio de Janeiro",
+    "uf_sigla": "RJ"
+  },
+  "330350": {
+    "cidade": "Nova Iguaçu",
+    "uf": "Rio de Janeiro",
+    "uf_sigla": "RJ"
+  },
+  "330420": {
+    "cidade": "Resende",
+    "uf": "Rio de Janeiro",
+    "uf_sigla": "RJ"
+  },
+  "330430": {
+    "cidade": "Rio Bonito",
+    "uf": "Rio de Janeiro",
+    "uf_sigla": "RJ"
+  },
+  "330455": {
+    "cidade": "Rio de Janeiro",
+    "uf": "Rio de Janeiro",
+    "uf_sigla": "RJ"
+  },
+  "330490": {
+    "cidade": "São Gonçalo",
     "uf": "Rio de Janeiro",
     "uf_sigla": "RJ"
   },
@@ -548,6 +1143,21 @@
     "cidade": "São João de Meriti",
     "uf": "Rio de Janeiro",
     "uf_sigla": "RJ"
+  },
+  "330580": {
+    "cidade": "Teresópolis",
+    "uf": "Rio de Janeiro",
+    "uf_sigla": "RJ"
+  },
+  "330610": {
+    "cidade": "Valença",
+    "uf": "Rio de Janeiro",
+    "uf_sigla": "RJ"
+  },
+  "350210": {
+    "cidade": "Andradina",
+    "uf": "São Paulo",
+    "uf_sigla": "SP"
   },
   "350600": {
     "cidade": "Bauru",
@@ -574,13 +1184,113 @@
     "uf": "São Paulo",
     "uf_sigla": "SP"
   },
+  "352010": {
+    "cidade": "Igarapava",
+    "uf": "São Paulo",
+    "uf_sigla": "SP"
+  },
+  "352100": {
+    "cidade": "Iperó",
+    "uf": "São Paulo",
+    "uf_sigla": "SP"
+  },
+  "352270": {
+    "cidade": "Itápolis",
+    "uf": "São Paulo",
+    "uf_sigla": "SP"
+  },
+  "352500": {
+    "cidade": "Jandira",
+    "uf": "São Paulo",
+    "uf_sigla": "SP"
+  },
+  "352710": {
+    "cidade": "Lins",
+    "uf": "São Paulo",
+    "uf_sigla": "SP"
+  },
+  "352900": {
+    "cidade": "Marília",
+    "uf": "São Paulo",
+    "uf_sigla": "SP"
+  },
+  "354340": {
+    "cidade": "Ribeirão Preto",
+    "uf": "São Paulo",
+    "uf_sigla": "SP"
+  },
+  "354780": {
+    "cidade": "Santo André",
+    "uf": "São Paulo",
+    "uf_sigla": "SP"
+  },
+  "354850": {
+    "cidade": "Santos",
+    "uf": "São Paulo",
+    "uf_sigla": "SP"
+  },
+  "354890": {
+    "cidade": "São Carlos",
+    "uf": "São Paulo",
+    "uf_sigla": "SP"
+  },
+  "354910": {
+    "cidade": "São João da Boa Vista",
+    "uf": "São Paulo",
+    "uf_sigla": "SP"
+  },
   "355030": {
     "cidade": "São Paulo",
     "uf": "São Paulo",
     "uf_sigla": "SP"
   },
+  "355670": {
+    "cidade": "Vinhedo",
+    "uf": "São Paulo",
+    "uf_sigla": "SP"
+  },
+  "410690": {
+    "cidade": "Curitiba",
+    "uf": "Paraná",
+    "uf_sigla": "PR"
+  },
+  "420420": {
+    "cidade": "Chapecó",
+    "uf": "Santa Catarina",
+    "uf_sigla": "SC"
+  },
+  "420540": {
+    "cidade": "Florianópolis",
+    "uf": "Santa Catarina",
+    "uf_sigla": "SC"
+  },
+  "420890": {
+    "cidade": "Jaraguá do Sul",
+    "uf": "Santa Catarina",
+    "uf_sigla": "SC"
+  },
+  "430510": {
+    "cidade": "Caxias do Sul",
+    "uf": "Rio Grande do Sul",
+    "uf_sigla": "RS"
+  },
+  "431405": {
+    "cidade": "Parobé",
+    "uf": "Rio Grande do Sul",
+    "uf_sigla": "RS"
+  },
+  "431440": {
+    "cidade": "Pelotas",
+    "uf": "Rio Grande do Sul",
+    "uf_sigla": "RS"
+  },
   "431490": {
     "cidade": "Porto Alegre",
+    "uf": "Rio Grande do Sul",
+    "uf_sigla": "RS"
+  },
+  "431560": {
+    "cidade": "Rio Grande",
     "uf": "Rio Grande do Sul",
     "uf_sigla": "RS"
   },
@@ -589,13 +1299,48 @@
     "uf": "Rio Grande do Sul",
     "uf_sigla": "RS"
   },
+  "500270": {
+    "cidade": "Campo Grande",
+    "uf": "Mato Grosso do Sul",
+    "uf_sigla": "MS"
+  },
+  "500370": {
+    "cidade": "Dourados",
+    "uf": "Mato Grosso do Sul",
+    "uf_sigla": "MS"
+  },
+  "500830": {
+    "cidade": "Três Lagoas",
+    "uf": "Mato Grosso do Sul",
+    "uf_sigla": "MS"
+  },
   "510250": {
     "cidade": "Cáceres",
     "uf": "Mato Grosso",
     "uf_sigla": "MT"
   },
+  "510340": {
+    "cidade": "Cuiabá",
+    "uf": "Mato Grosso",
+    "uf_sigla": "MT"
+  },
+  "510760": {
+    "cidade": "Rondonópolis",
+    "uf": "Mato Grosso",
+    "uf_sigla": "MT"
+  },
+  "510840": {
+    "cidade": "Várzea Grande",
+    "uf": "Mato Grosso",
+    "uf_sigla": "MT"
+  },
   "520140": {
     "cidade": "Aparecida de Goiânia",
+    "uf": "Goiás",
+    "uf_sigla": "GO"
+  },
+  "520510": {
+    "cidade": "Catalão",
     "uf": "Goiás",
     "uf_sigla": "GO"
   },
@@ -623,5 +1368,20 @@
     "cidade": "Senador Canedo",
     "uf": "Goiás",
     "uf_sigla": "GO"
+  },
+  "522060": {
+    "cidade": "Silvânia",
+    "uf": "Goiás",
+    "uf_sigla": "GO"
+  },
+  "522119": {
+    "cidade": "Terezópolis de Goiás",
+    "uf": "Goiás",
+    "uf_sigla": "GO"
+  },
+  "530010": {
+    "cidade": "Brasília",
+    "uf": "Distrito Federal",
+    "uf_sigla": "DF"
   }
 }

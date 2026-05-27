@@ -25,7 +25,10 @@ from pipeline.cache import hash_subset
 warnings.filterwarnings("ignore")
 
 
-REDES_ALVO = ["Todas", "EBSERH", "PROADI-SUS"]
+def _discover_redes(records: list[dict]) -> list[str]:
+    """Redes presentes no JSON. Sempre tem 'Todas' (treina com tudo) + cada rede individual."""
+    redes = {r.get("rede_formadora") for r in records if r.get("rede_formadora")}
+    return ["Todas", *sorted(redes)] if redes else ["Todas"]
 
 
 # ----------------------------------------------------------------------
@@ -176,7 +179,9 @@ def processar(
                 "total_registros": len(relevant)}
 
     resultados_por_rede: dict = {}
-    for rede_filtro in REDES_ALVO:
+    redes_alvo = _discover_redes(records)
+    print(f"  [ml_logbook] redes encontradas: {', '.join(redes_alvo)}")
+    for rede_filtro in redes_alvo:
         rede_param = None if rede_filtro == "Todas" else rede_filtro
         df = _preparar_df(records, rede_param)
         if len(df) < 10:

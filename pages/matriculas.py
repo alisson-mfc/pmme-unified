@@ -4,8 +4,9 @@ Ordem preservada: KPI/Filtros → Dados Pessoais → Formação Acadêmica → E
 e Títulos → Distribuição Geográfica → Mapas → Apropriação sobre Temas →
 Análise Qualitativa.
 
-Novidade: filtro de Ano de Matrícula (extraído de data_matricula). Combinado com a
-rede, gera 9 cortes possíveis pra análise Claude.
+Novidade: filtro de Edital (campo `edital` no JSON). Combinado com a rede, gera os
+cortes pra análise Claude (N redes × N editais). Ambos os filtros são dinâmicos —
+lidos do JSON em runtime.
 """
 
 from __future__ import annotations
@@ -107,7 +108,9 @@ def _section(title: str, *children) -> html.Section:
 # LAYOUT
 # ----------------------------------------------------------------------
 def layout() -> html.Div:
-    anos = matriculas_agg.available_anos()  # ["Todos", "2025", "2026"]
+    # Dropdowns dinâmicos — lê do JSON em runtime
+    editais = matriculas_agg.available_editais()  # ["Todos", "1", "2", "3", ...]
+    redes = matriculas_agg.available_redes()       # ["Todas", "HU-BRASIL", "PARCEIRAS", ...]
 
     filter_bar = html.Div(
         className="filter-bar",
@@ -128,8 +131,7 @@ def layout() -> html.Div:
                             html.Label("Rede Formadora", htmlFor="mat-filtro-rede"),
                             dcc.Dropdown(
                                 id="mat-filtro-rede",
-                                options=[{"label": x, "value": x}
-                                         for x in ("Todas", "EBSERH", "PROADI-SUS")],
+                                options=[{"label": x, "value": x} for x in redes],
                                 value="Todas",
                                 clearable=False,
                             ),
@@ -138,10 +140,10 @@ def layout() -> html.Div:
                     html.Div(
                         className="filter-control",
                         children=[
-                            html.Label("Ano de Matrícula", htmlFor="mat-filtro-ano"),
+                            html.Label("Edital", htmlFor="mat-filtro-edital"),
                             dcc.Dropdown(
-                                id="mat-filtro-ano",
-                                options=[{"label": a, "value": a} for a in anos],
+                                id="mat-filtro-edital",
+                                options=[{"label": e, "value": e} for e in editais],
                                 value="Todos",
                                 clearable=False,
                             ),
@@ -394,12 +396,12 @@ def _fmt_total(n: int) -> str:
     Output("mat-g-regiao-nascimento", "figure"),
     Output("mat-g-regiao-vaga", "figure"),
     Input("mat-filtro-rede", "value"),
-    Input("mat-filtro-ano", "value"),
+    Input("mat-filtro-edital", "value"),
 )
-def _update_static_charts(rede: str, ano: str):
+def _update_static_charts(rede: str, edital: str):
     rede = rede or "Todas"
-    ano = ano or "Todos"
-    agg = matriculas_agg.aggregate_for(rede, ano)
+    edital = edital or "Todos"
+    agg = matriculas_agg.aggregate_for(rede, edital)
 
     return (
         _fmt_total(agg["total"]),
@@ -430,14 +432,14 @@ def _update_static_charts(rede: str, ano: str):
     Output("mat-g-apropriacao", "figure"),
     Output("mat-apropriacao-title", "children"),
     Input("mat-filtro-rede", "value"),
-    Input("mat-filtro-ano", "value"),
+    Input("mat-filtro-edital", "value"),
     Input("mat-dropdown-apropriacao", "value"),
 )
-def _update_apropriacao(rede: str, ano: str, tema: str):
+def _update_apropriacao(rede: str, edital: str, tema: str):
     rede = rede or "Todas"
-    ano = ano or "Todos"
+    edital = edital or "Todos"
     tema = tema or "apropriacao_redes"
-    agg = matriculas_agg.aggregate_for(rede, ano)
+    agg = matriculas_agg.aggregate_for(rede, edital)
     return charts.apropriacao_bar(agg.get(tema, {})), TEMAS_TITULOS.get(tema, tema)
 
 
@@ -450,15 +452,15 @@ def _update_apropriacao(rede: str, ano: str, tema: str):
     Output("mat-mapa-hint", "style"),
     Output("mat-mapa-voltar-wrap", "style"),
     Input("mat-filtro-rede", "value"),
-    Input("mat-filtro-ano", "value"),
+    Input("mat-filtro-edital", "value"),
     Input("mat-tipo-mapa", "value"),
     Input("mat-mapa-estado-selecionado", "data"),
 )
-def _update_mapa(rede: str, ano: str, tipo: str, estado_sel: str | None):
+def _update_mapa(rede: str, edital: str, tipo: str, estado_sel: str | None):
     rede = rede or "Todas"
-    ano = ano or "Todos"
+    edital = edital or "Todos"
     tipo = tipo or "mapa_estado_vaga"
-    agg = matriculas_agg.aggregate_for(rede, ano)
+    agg = matriculas_agg.aggregate_for(rede, edital)
 
     hint_show = {"display": "block"} if (tipo == "mapa_estado_vaga" and not estado_sel) else {"display": "none"}
     voltar_show = {"display": "block"} if estado_sel else {"display": "none"}
@@ -528,15 +530,15 @@ def _update_mapa(rede: str, ano: str, tipo: str, estado_sel: str | None):
     Input("mat-btn-voltar-mapa", "n_clicks"),
     Input("mat-tipo-mapa", "value"),
     Input("mat-filtro-rede", "value"),
-    Input("mat-filtro-ano", "value"),
+    Input("mat-filtro-edital", "value"),
     prevent_initial_call=True,
 )
-def _on_mapa_interaction(click_data, n_voltar, tipo, _rede, _ano):
+def _on_mapa_interaction(click_data, n_voltar, tipo, _rede, _edital):
     from dash import ctx
     triggered = ctx.triggered_id
 
     # Qualquer mudança que não seja clique no mapa → reseta drilldown
-    if triggered in ("mat-btn-voltar-mapa", "mat-tipo-mapa", "mat-filtro-rede", "mat-filtro-ano"):
+    if triggered in ("mat-btn-voltar-mapa", "mat-tipo-mapa", "mat-filtro-rede", "mat-filtro-edital"):
         return None
 
     if triggered == "mat-mapa" and click_data and tipo == "mapa_estado_vaga":
@@ -556,15 +558,15 @@ def _on_mapa_interaction(click_data, n_voltar, tipo, _rede, _ano):
     Output("mat-g-sentimentos", "figure"),
     Output("mat-resumo", "children"),
     Input("mat-filtro-rede", "value"),
-    Input("mat-filtro-ano", "value"),
+    Input("mat-filtro-edital", "value"),
     Input("mat-dropdown-qualitativo", "value"),
 )
-def _update_qualitativo(rede: str, ano: str, campo: str):
+def _update_qualitativo(rede: str, edital: str, campo: str):
     rede = rede or "Todas"
-    ano = ano or "Todos"
+    edital = edital or "Todos"
     campo = campo or "aptidoes_rotina"
 
-    analise = loader.get_matriculas_analysis(rede, ano)
+    analise = loader.get_matriculas_analysis(rede, edital)
     campos = (analise or {}).get("campos", {})
     dados_campo = campos.get(campo)
 
@@ -578,7 +580,7 @@ def _update_qualitativo(rede: str, ano: str, campo: str):
         resumo = "*Análise indisponível para este corte.*"
         return nuvem, sent_fig, resumo
 
-    src = loader.get_nuvem_palavras_src(rede, ano, campo)
+    src = loader.get_nuvem_palavras_src(rede, edital, campo)
     if src:
         nuvem = html.Img(src=src, alt=f"Nuvem de palavras — {campo}", className="nuvem-img")
     else:

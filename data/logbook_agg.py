@@ -94,6 +94,13 @@ def available_hospitais() -> list[str]:
     return ["Todos", *items]
 
 
+def available_redes() -> list[str]:
+    """Redes formadoras presentes no JSON (ordenadas alfabeticamente). Sempre tem 'Todas'."""
+    records = loader.get_logbook_raw()
+    redes = {r.get("rede_formadora") for r in records if r.get("rede_formadora")}
+    return ["Todas", *sorted(redes)]
+
+
 # ----------------------------------------------------------------------
 # Helpers internos
 # ----------------------------------------------------------------------

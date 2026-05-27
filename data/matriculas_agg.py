@@ -1,8 +1,12 @@
 """Agregações da aba Matrículas — port 1:1 da lógica original de dashboard.html e mapas.html.
 
-Cada função extrai um corte específico do array de records (já filtrado por rede/ano).
-A função `aggregate_for(rede, ano)` é o entrypoint principal: aplica filtros e retorna
+Cada função extrai um corte específico do array de records (já filtrado por rede/edital).
+A função `aggregate_for(rede, edital)` é o entrypoint principal: aplica filtros e retorna
 todas as métricas calculadas como um dict, com cache em memória.
+
+Filtros disponíveis dinamicamente:
+  • `available_redes()`   — lê do JSON quais redes existem
+  • `available_editais()` — lê do JSON quais editais existem (campo `edital`)
 """
 
 from __future__ import annotations
@@ -21,7 +25,6 @@ from data.constants import (
     SIGLAS_ESTADOS,
     extrair_uf_de_municipio,
 )
-from data.parsers import extract_year
 
 
 # ----------------------------------------------------------------------
@@ -277,24 +280,21 @@ def mapa_estado_vaga(records: list[dict]) -> tuple[dict[str, int], list[dict]]:
 # ----------------------------------------------------------------------
 # Entrypoint
 # ----------------------------------------------------------------------
-def _filtrar(records: list[dict], rede: str, ano: str) -> list[dict]:
+def _filtrar(records: list[dict], rede: str, edital: str) -> list[dict]:
     out = records
     if rede and rede != "Todas":
         out = [r for r in out if r.get("rede_formadora") == rede]
-    if ano and ano != "Todos":
-        try:
-            ano_int = int(ano)
-            out = [r for r in out if extract_year(r.get("data_matricula")) == ano_int]
-        except (ValueError, TypeError):
-            pass
+    if edital and edital != "Todos":
+        # edital no JSON vem como int; compara via str pra robustez
+        out = [r for r in out if str(r.get("edital")) == str(edital)]
     return out
 
 
-@lru_cache(maxsize=32)
-def aggregate_for(rede: str = "Todas", ano: str = "Todos") -> dict:
-    """Retorna todas as agregações de matrículas para o corte (rede, ano)."""
+@lru_cache(maxsize=64)
+def aggregate_for(rede: str = "Todas", edital: str = "Todos") -> dict:
+    """Retorna todas as agregações de matrículas para o corte (rede, edital)."""
     records_all = loader.get_matriculas_raw()
-    rec = _filtrar(records_all, rede, ano)
+    rec = _filtrar(records_all, rede, edital)
 
     mapa_vaga, vagas_municipios = mapa_estado_vaga(rec)
 
@@ -340,12 +340,19 @@ def aggregate_for(rede: str = "Todas", ano: str = "Todos") -> dict:
     }
 
 
-def available_anos() -> list[str]:
-    """Anos disponíveis no campo data_matricula (string ordenada crescente). Sempre tem 'Todos'."""
+def available_editais() -> list[str]:
+    """Editais disponíveis no JSON (string ordenada crescente). Sempre tem 'Todos'."""
     records = loader.get_matriculas_raw()
-    years = set()
+    eds = set()
     for r in records:
-        y = extract_year(r.get("data_matricula"))
-        if y is not None:
-            years.add(y)
-    return ["Todos", *(str(y) for y in sorted(years))]
+        e = r.get("edital")
+        if e is not None:
+            eds.add(int(e) if isinstance(e, (int, float)) and not isinstance(e, bool) else str(e))
+    return ["Todos", *(str(e) for e in sorted(eds, key=lambda x: (not isinstance(x, int), x)))]
+
+
+def available_redes() -> list[str]:
+    """Redes formadoras presentes no JSON (ordenadas alfabeticamente). Sempre tem 'Todas'."""
+    records = loader.get_matriculas_raw()
+    redes = {r.get("rede_formadora") for r in records if r.get("rede_formadora")}
+    return ["Todas", *sorted(redes)]

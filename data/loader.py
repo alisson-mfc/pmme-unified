@@ -216,23 +216,23 @@ def get_logbook_analysis(rede: str) -> dict:
     return data if isinstance(data, dict) else {}
 
 
-@lru_cache(maxsize=32)
-def get_matriculas_analysis(rede: str, ano: str = "Todos") -> dict:
-    """Análise Claude de matrículas para um corte (rede, ano).
+@lru_cache(maxsize=64)
+def get_matriculas_analysis(rede: str, edital: str = "Todos") -> dict:
+    """Análise Claude de matrículas para um corte (rede, edital).
 
-    Tenta primeiro a estrutura nova (analises/matriculas/{rede}/{ano}/resultados.json);
+    Tenta primeiro a estrutura nova (analises/matriculas/{rede}/{edital}/resultados.json);
     fallback: estrutura antiga em pmme-dashboard/analises/{rede}/resultados_analises.json,
-    válida apenas quando ano="Todos".
+    válida apenas quando edital="Todos".
     """
     new_local = [
-        LOCAL_ANALISES / "matriculas" / rede / ano / "resultados.json",
-        SIBLING_DADOS / "analises" / "matriculas" / rede / ano / "resultados.json",
+        LOCAL_ANALISES / "matriculas" / rede / edital / "resultados.json",
+        SIBLING_DADOS / "analises" / "matriculas" / rede / edital / "resultados.json",
     ]
-    new_remote = [f"analises/matriculas/{rede}/{ano}/resultados.json"]
+    new_remote = [f"analises/matriculas/{rede}/{edital}/resultados.json"]
 
     old_local: list[Path] = []
     old_remote: list[str] = []
-    if ano == "Todos":
+    if edital == "Todos":
         old_local = [SIBLING_DASH_ANALISES / rede / "resultados_analises.json"]
         # Antiga estrutura não está no pmme-dados; sem fallback remoto.
 
@@ -247,27 +247,27 @@ def get_matriculas_analysis(rede: str, ano: str = "Todos") -> dict:
 # API PÚBLICA — NUVENS DE PALAVRAS (PNGs)
 # ----------------------------------------------------------------------
 @lru_cache(maxsize=128)
-def get_nuvem_palavras_src(rede: str, ano: str, campo: str) -> str | None:
+def get_nuvem_palavras_src(rede: str, edital: str, campo: str) -> str | None:
     """Retorna o `src` (URL ou data: URI) de uma nuvem de palavras pra usar em html.Img.
 
     Estratégia: baixa o PNG da fonte com prioridade
     (local pipeline → sibling pmme-dashboard antigo → remoto), grava em
     assets/nuvens/ pra Dash servir como /assets/, e devolve essa URL.
     """
-    slug_arquivo = f"{_rede_slug(rede)}_{ano}_{campo}.png"
+    slug_arquivo = f"{_rede_slug(rede)}_{edital}_{campo}.png"
     destino = ASSETS_NUVENS / slug_arquivo
 
     if destino.exists():
         return f"/assets/nuvens/{slug_arquivo}"
 
     new_local = [
-        LOCAL_ANALISES / "matriculas" / rede / ano / "nuvens_palavras" / f"{campo}.png",
-        SIBLING_DADOS / "analises" / "matriculas" / rede / ano / "nuvens_palavras" / f"{campo}.png",
+        LOCAL_ANALISES / "matriculas" / rede / edital / "nuvens_palavras" / f"{campo}.png",
+        SIBLING_DADOS / "analises" / "matriculas" / rede / edital / "nuvens_palavras" / f"{campo}.png",
     ]
-    new_remote = [f"analises/matriculas/{rede}/{ano}/nuvens_palavras/{campo}.png"]
+    new_remote = [f"analises/matriculas/{rede}/{edital}/nuvens_palavras/{campo}.png"]
 
     old_local: list[Path] = []
-    if ano == "Todos":
+    if edital == "Todos":
         old_local = [SIBLING_DASH_ANALISES / rede / "nuvens_palavras" / f"{campo}.png"]
 
     data = _try_bytes_sources(

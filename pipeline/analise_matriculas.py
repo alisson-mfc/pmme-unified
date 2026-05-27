@@ -66,8 +66,26 @@ CONTEXTOS_RESUMO = {
     "momento_imersao": "expectativas para imersão presencial",
 }
 
-REDES = ["Todas", "EBSERH", "PROADI-SUS"]
-ANOS = ["Todos", "2025", "2026"]
+# Dimensões dinâmicas — descobertas em runtime a partir dos records.
+# Listas hardcoded como fallback se o dado estiver vazio.
+_REDES_FALLBACK = ["Todas"]
+_EDITAIS_FALLBACK = ["Todos"]
+
+
+def _discover_redes(records: list[dict]) -> list[str]:
+    redes = {r.get("rede_formadora") for r in records if r.get("rede_formadora")}
+    return ["Todas", *sorted(redes)] if redes else _REDES_FALLBACK
+
+
+def _discover_editais(records: list[dict]) -> list[str]:
+    eds = set()
+    for r in records:
+        e = r.get("edital")
+        if e is not None:
+            eds.add(int(e) if isinstance(e, (int, float)) and not isinstance(e, bool) else str(e))
+    if not eds:
+        return _EDITAIS_FALLBACK
+    return ["Todos", *(str(e) for e in sorted(eds, key=lambda x: (not isinstance(x, int), x)))]
 
 
 # ----------------------------------------------------------------------
@@ -90,33 +108,13 @@ def _get_client() -> anthropic.Anthropic | None:
 # ----------------------------------------------------------------------
 # HELPERS
 # ----------------------------------------------------------------------
-def _extract_year(value: str | None) -> int | None:
-    if not value:
-        return None
-    try:
-        # ISO YYYY-MM-DD ou DD/MM/YYYY
-        s = str(value)
-        if s[:4].isdigit() and (len(s) == 4 or s[4] in "-T "):
-            return int(s[:4])
-        parts = s.split(" ")[0].split("/")
-        if len(parts) == 3 and len(parts[2]) >= 4:
-            return int(parts[2])
-    except (ValueError, IndexError):
-        pass
-    return None
-
-
-def _filtrar(records: list[dict], rede: str, ano: str) -> list[dict]:
-    """Filtra records pelo corte (rede, ano)."""
+def _filtrar(records: list[dict], rede: str, edital: str) -> list[dict]:
+    """Filtra records pelo corte (rede, edital)."""
     out = records
     if rede and rede != "Todas":
         out = [r for r in out if r.get("rede_formadora") == rede]
-    if ano and ano != "Todos":
-        try:
-            ano_int = int(ano)
-            out = [r for r in out if _extract_year(r.get("data_matricula")) == ano_int]
-        except ValueError:
-            pass
+    if edital and edital != "Todos":
+        out = [r for r in out if str(r.get("edital")) == str(edital)]
     return out
 
 
@@ -130,7 +128,7 @@ def _flat_textual(records: list[dict]) -> list[dict]:
             "impressao_servico": r.get("impressao_servico"),
             "momento_imersao": r.get("momento_imersao"),
             "rede_formadora": r.get("rede_formadora"),
-            "data_matricula": r.get("data_matricula"),
+            "edital": r.get("edital"),
         }
         for r in records
     ]
@@ -250,7 +248,7 @@ def _resumo_fallback(textos: list[str], campo: str) -> str:
     return f"Análise resumida de {len(textos)} textos. Palavras-chave: {chaves}."
 
 
-def _resumo_claude(textos: list[str], campo: str, rede: str, ano: str) -> str:
+def _resumo_claude(textos: list[str], campo: str, rede: str, edital: str) -> str:
     client = _get_client()
     if client is None:
         return _resumo_fallback(textos, campo)
@@ -258,10 +256,10 @@ def _resumo_claude(textos: list[str], campo: str, rede: str, ano: str) -> str:
     amostra = [str(t)[:300] for t in textos[:20]]
     contexto = CONTEXTOS_RESUMO.get(campo, "respostas dos profissionais")
     rede_info = f" da rede {rede}" if rede != "Todas" else ""
-    ano_info = f", entrada em {ano}" if ano != "Todos" else ""
+    edital_info = f", edital {edital}" if edital != "Todos" else ""
 
     prompt = (
-        f"Analise os textos sobre {contexto} de médicos do PMM-e{rede_info}{ano_info}.\n\n"
+        f"Analise os textos sobre {contexto} de médicos do PMM-e{rede_info}{edital_info}.\n\n"
         f"Textos:\n{chr(10).join('- ' + t for t in amostra)}\n\n"
         "Crie um resumo executivo em 2-3 parágrafos com:\n"
         "1. Principais temas e expectativas\n"
@@ -286,44 +284,44 @@ def _resumo_claude(textos: list[str], campo: str, rede: str, ano: str) -> str:
 def _processar_corte(
     records: list[dict],
     rede: str,
-    ano: str,
+    edital: str,
     base_dir: Path,
     *,
     force: bool = False,
     dry_run: bool = False,
 ) -> dict:
-    """Roda análise para um único corte (rede, ano). Retorna status dict."""
-    subset = _filtrar(records, rede, ano)
+    """Roda análise para um único corte (rede, edital). Retorna status dict."""
+    subset = _filtrar(records, rede, edital)
     subset_textual = _flat_textual(subset)
     current_hash = hash_subset(subset_textual)
     total = len(subset)
 
-    out_dir = base_dir / "matriculas" / rede / ano
+    out_dir = base_dir / "matriculas" / rede / edital
     out_path = out_dir / "resultados.json"
     nuvens_dir = out_dir / "nuvens_palavras"
 
     if total == 0:
-        return {"rede": rede, "ano": ano, "status": "skip-empty", "total": 0}
+        return {"rede": rede, "edital": edital, "status": "skip-empty", "total": 0}
 
     if not needs_processing(out_path, current_hash, force=force):
         return {
-            "rede": rede, "ano": ano, "status": "skip-cached",
+            "rede": rede, "edital": edital, "status": "skip-cached",
             "total": total, "file_hash": current_hash,
         }
 
     if dry_run:
         return {
-            "rede": rede, "ano": ano, "status": "would-run",
+            "rede": rede, "edital": edital, "status": "would-run",
             "total": total, "file_hash": current_hash,
         }
 
-    print(f"  [{rede}/{ano}] processando ({total} registros)...")
+    print(f"  [{rede}/edital={edital}] processando ({total} registros)...")
     out_dir.mkdir(parents=True, exist_ok=True)
 
     resultados: dict = {
         "data_processamento": datetime.now().isoformat(),
         "rede_formadora": rede,
-        "ano_matricula": ano,
+        "edital": edital,
         "file_hash": current_hash,
         "total_registros": total,
         "usando_claude_api": _get_client() is not None,
@@ -341,7 +339,7 @@ def _processar_corte(
         nuvem_rel = _criar_nuvem(textos, nuvem_path)
         sentimentos = _sentimento_claude(textos)
         distribuicao = dict(Counter(sentimentos))
-        resumo = _resumo_claude(textos, campo, rede, ano)
+        resumo = _resumo_claude(textos, campo, rede, edital)
 
         resultados["campos"][campo] = {
             "descricao": descricao,
@@ -356,7 +354,7 @@ def _processar_corte(
         encoding="utf-8",
     )
     return {
-        "rede": rede, "ano": ano, "status": "processed",
+        "rede": rede, "edital": edital, "status": "processed",
         "total": total, "file_hash": current_hash, "output": str(out_path),
     }
 
@@ -371,15 +369,21 @@ def processar(
     force: bool = False,
     dry_run: bool = False,
 ) -> list[dict]:
-    """Roda análise para todos os 9 cortes. Retorna lista de status por corte."""
+    """Roda análise para todos os cortes (rede × edital) — dinâmicos a partir dos records."""
     base_dir = Path(base_dir)
     base_dir.mkdir(parents=True, exist_ok=True)
+
+    redes = _discover_redes(records)
+    editais = _discover_editais(records)
+    print(f"  [matriculas] {len(redes)} redes × {len(editais)} editais = "
+          f"{len(redes) * len(editais)} cortes")
+
     resumos = []
-    for rede in REDES:
-        for ano in ANOS:
-            r = _processar_corte(records, rede, ano, base_dir,
+    for rede in redes:
+        for edital in editais:
+            r = _processar_corte(records, rede, edital, base_dir,
                                  force=force, dry_run=dry_run)
             resumos.append(r)
-            print(f"  [{r['rede']}/{r['ano']}] {r['status']} "
+            print(f"  [{r['rede']}/edital={r['edital']}] {r['status']} "
                   f"(n={r.get('total', 0)})")
     return resumos

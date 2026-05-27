@@ -86,7 +86,7 @@ def _filter_bar() -> html.Div:
                             dcc.Dropdown(
                                 id="log-filtro-rede",
                                 options=[{"label": x, "value": x}
-                                         for x in ("Todas", "EBSERH", "PROADI-SUS")],
+                                         for x in logbook_agg.available_redes()],
                                 value="Todas",
                                 clearable=False,
                             ),

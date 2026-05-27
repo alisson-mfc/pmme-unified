@@ -29,7 +29,10 @@ MAX_TOKENS = 2000
 MIN_RECORDS_PARA_PREDICAO = 5
 TOP_N_PREDICAO = 20
 
-REDES = ["Todas", "EBSERH", "PROADI-SUS"]
+def _discover_redes(records: list[dict]) -> list[str]:
+    """Redes encontradas no JSON (dinâmico). Sempre tem 'Todas'."""
+    redes = {r.get("rede_formadora") for r in records if r.get("rede_formadora")}
+    return ["Todas", *sorted(redes)] if redes else ["Todas"]
 
 
 # ----------------------------------------------------------------------
@@ -347,11 +350,13 @@ def processar(
     force: bool = False,
     dry_run: bool = False,
 ) -> list[dict]:
-    """Roda análise pra cada uma das 3 redes."""
+    """Roda análise pra cada rede encontrada nos records (dinâmico)."""
     base_dir = Path(base_dir)
     base_dir.mkdir(parents=True, exist_ok=True)
+    redes = _discover_redes(records)
+    print(f"  [logbook] {len(redes)} redes encontradas: {', '.join(redes)}")
     resumos = []
-    for rede in REDES:
+    for rede in redes:
         r = _processar_rede(records, rede, base_dir,
                             arquivo_input=arquivo_input,
                             force=force, dry_run=dry_run)

@@ -1,11 +1,11 @@
-"""Análise Claude do logbook — refator de processar_ia.py.
+"""Análise Gemini do logbook — refator de processar_ia.py.
 
 Mudanças vs original:
-  • Usa SDK oficial `anthropic` em vez de urllib.request.
+  • Usa Google Gemini via SDK oficial `google-genai` (antes era Anthropic Claude).
   • Cache por hash SHA-256 — não re-roda se o subset não mudou.
   • Output em `analises/logbook/{rede}/resultados.json` (estrutura idêntica ao
     `analise_preditiva_{rede}.json` original, para compat retroativa com o front).
-  • Padroniza ANTHROPIC_API_KEY (em vez de VITE_CLAUDE_API_KEY).
+  • Padroniza GEMINI_API_KEY (com fallback GOOGLE_API_KEY).
 """
 
 from __future__ import annotations
@@ -16,7 +16,8 @@ import re
 from datetime import datetime
 from pathlib import Path
 
-import anthropic
+from google import genai
+from google.genai import types as genai_types
 
 from pipeline.cache import hash_subset, needs_processing
 
@@ -24,7 +25,7 @@ from pipeline.cache import hash_subset, needs_processing
 # ----------------------------------------------------------------------
 # CONFIGURAÇÃO
 # ----------------------------------------------------------------------
-MODEL_TOPICOS = os.environ.get("CLAUDE_MODEL_TOPICOS", "claude-sonnet-4-6")
+MODEL_TOPICOS = os.environ.get("GEMINI_MODEL_TOPICOS", "gemini-3.1-flash-lite")
 MAX_TOKENS = 2000
 MIN_RECORDS_PARA_PREDICAO = 5
 TOP_N_PREDICAO = 20
@@ -36,24 +37,24 @@ def _discover_redes(records: list[dict]) -> list[str]:
 
 
 # ----------------------------------------------------------------------
-# CLIENTE CLAUDE (lazy)
+# CLIENTE GEMINI (lazy)
 # ----------------------------------------------------------------------
-_client: anthropic.Anthropic | None = None
+_client: genai.Client | None = None
 
 
-def _get_client() -> anthropic.Anthropic | None:
+def _get_client() -> genai.Client | None:
     global _client
     if _client is not None:
         return _client
-    key = os.environ.get("ANTHROPIC_API_KEY")
+    key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
     if not key:
         return None
-    _client = anthropic.Anthropic(api_key=key)
+    _client = genai.Client(api_key=key)
     return _client
 
 
 # ----------------------------------------------------------------------
-# 1. TÓPICOS — agrupamento de procedimentos não listados via Claude
+# 1. TÓPICOS — agrupamento de procedimentos não listados via Gemini
 # ----------------------------------------------------------------------
 def _parse_temas(texto: str) -> list[dict]:
     temas = []
@@ -121,14 +122,17 @@ def _analisar_topicos(records: list[dict]) -> dict:
     )
 
     try:
-        msg = client.messages.create(
+        resp = client.models.generate_content(
             model=MODEL_TOPICOS,
-            max_tokens=MAX_TOKENS,
-            messages=[{"role": "user", "content": prompt}],
+            contents=prompt,
+            config=genai_types.GenerateContentConfig(
+                max_output_tokens=MAX_TOKENS,
+                temperature=0.3,
+            ),
         )
-        resposta = msg.content[0].text
+        resposta = resp.text or ""
     except Exception as e:
-        print(f"    [erro Claude tópicos]: {e}")
+        print(f"    [erro Gemini tópicos]: {e}")
         return {"temas": []}
 
     temas = _parse_temas(resposta)

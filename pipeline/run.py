@@ -337,9 +337,10 @@ def main() -> int:
         log("modo force — cache será ignorado", level="info")
 
     if not args.dry_run and not args.no_analyze:
-        if not os.environ.get("ANTHROPIC_API_KEY"):
-            log("ATENÇÃO: ANTHROPIC_API_KEY não configurada — Claude vai usar "
-                "fallback (resumos curtos). Coloque a chave no .env e rode de novo.",
+        if not (os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")):
+            log("ATENÇÃO: GEMINI_API_KEY não configurada — análise IA vai usar "
+                "fallback (resumos curtos, sem agrupamento de tópicos). "
+                "Coloque a chave no .env e rode de novo.",
                 level="warn")
 
     summary: dict = {}

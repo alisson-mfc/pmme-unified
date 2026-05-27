@@ -1,12 +1,11 @@
-"""Análise Claude de matrículas — refator de processo_analises.py.
+"""Análise Gemini de matrículas — refator de processo_analises.py.
 
 Mudanças vs original:
-  • Adiciona dimensão **ano de matrícula** (extraído de data_matricula).
-    Resultado: 9 cortes (3 redes × 3 anos: Todos, 2025, 2026).
-  • Cache por hash SHA-256 do subset — não chama Claude se o hash bate com o salvo.
-  • Usa SDK oficial `anthropic` em vez de urllib.request.
-  • Output em `analises/matriculas/{rede}/{ano}/resultados.json` + `nuvens_palavras/*.png`.
-  • Padroniza `ANTHROPIC_API_KEY` como variável de ambiente.
+  • Dimensão **edital** (campo `edital` no JSON), dinâmica (lê do JSON em runtime).
+  • Cache por hash SHA-256 do subset — não chama IA se o hash bate com o salvo.
+  • Usa Google Gemini via SDK oficial `google-genai` (antes era Anthropic Claude).
+  • Output em `analises/matriculas/{rede}/{edital}/resultados.json` + `nuvens_palavras/*.png`.
+  • Variável de ambiente: `GEMINI_API_KEY`.
 """
 
 from __future__ import annotations
@@ -19,7 +18,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Iterable
 
-import anthropic
+from google import genai
+from google.genai import types as genai_types
 import matplotlib
 
 matplotlib.use("Agg")
@@ -46,8 +46,9 @@ from pipeline.cache import hash_subset, needs_processing
 # ----------------------------------------------------------------------
 # CONFIGURAÇÃO
 # ----------------------------------------------------------------------
-MODEL_SENTIMENTO = os.environ.get("CLAUDE_MODEL_SENTIMENTO", "claude-sonnet-4-6")
-MODEL_RESUMO = os.environ.get("CLAUDE_MODEL_RESUMO", "claude-sonnet-4-6")
+# Modelos Gemini — configuráveis via env, default Flash Lite (mais barato/rápido).
+MODEL_SENTIMENTO = os.environ.get("GEMINI_MODEL_SENTIMENTO", "gemini-3.1-flash-lite")
+MODEL_RESUMO = os.environ.get("GEMINI_MODEL_RESUMO", "gemini-3.1-flash-lite")
 BATCH_SIZE = 10
 SENTIMENTO_MAX_TOKENS = 1024
 RESUMO_MAX_TOKENS = 1500
@@ -89,20 +90,40 @@ def _discover_editais(records: list[dict]) -> list[str]:
 
 
 # ----------------------------------------------------------------------
-# CLIENTE CLAUDE (lazy)
+# CLIENTE GEMINI (lazy)
 # ----------------------------------------------------------------------
-_client: anthropic.Anthropic | None = None
+_client: genai.Client | None = None
 
 
-def _get_client() -> anthropic.Anthropic | None:
+def _get_client() -> genai.Client | None:
     global _client
     if _client is not None:
         return _client
-    key = os.environ.get("ANTHROPIC_API_KEY")
+    key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
     if not key:
         return None
-    _client = anthropic.Anthropic(api_key=key)
+    _client = genai.Client(api_key=key)
     return _client
+
+
+def _gemini_call(model: str, prompt: str, max_tokens: int) -> str | None:
+    """Chamada unificada ao Gemini. Retorna texto da resposta ou None se falhar."""
+    client = _get_client()
+    if client is None:
+        return None
+    try:
+        resp = client.models.generate_content(
+            model=model,
+            contents=prompt,
+            config=genai_types.GenerateContentConfig(
+                max_output_tokens=max_tokens,
+                temperature=0.3,
+            ),
+        )
+        return resp.text
+    except Exception as e:
+        print(f"      [erro Gemini {model}]: {e}")
+        return None
 
 
 # ----------------------------------------------------------------------
@@ -207,10 +228,9 @@ def _sentimento_fallback(textos: list[str]) -> list[str]:
     return out
 
 
-def _sentimento_claude(textos: list[str]) -> list[str]:
-    """Análise de sentimentos via Claude, em lotes."""
-    client = _get_client()
-    if client is None:
+def _sentimento_gemini(textos: list[str]) -> list[str]:
+    """Análise de sentimentos via Gemini, em lotes."""
+    if _get_client() is None:
         return _sentimento_fallback(textos)
 
     resultados: list[str] = []
@@ -223,21 +243,16 @@ def _sentimento_claude(textos: list[str]) -> list[str]:
             f"Textos:\n{chr(10).join(numerados)}\n\n"
             'Responda APENAS em JSON: {"sentimentos": ["Positivo", "Negativo", "Neutro", ...]}'
         )
-        try:
-            msg = client.messages.create(
-                model=MODEL_SENTIMENTO,
-                max_tokens=SENTIMENTO_MAX_TOKENS,
-                messages=[{"role": "user", "content": prompt}],
-            )
-            resposta = msg.content[0].text
+        resposta = _gemini_call(MODEL_SENTIMENTO, prompt, SENTIMENTO_MAX_TOKENS)
+        if resposta:
             m = re.search(r"\{.*\}", resposta, re.DOTALL)
             if m:
-                resultados.extend(json.loads(m.group()).get("sentimentos", []))
-            else:
-                resultados.extend(_sentimento_fallback(batch))
-        except Exception as e:
-            print(f"      [erro Claude sentimentos]: {e}")
-            resultados.extend(_sentimento_fallback(batch))
+                try:
+                    resultados.extend(json.loads(m.group()).get("sentimentos", []))
+                    continue
+                except json.JSONDecodeError:
+                    pass
+        resultados.extend(_sentimento_fallback(batch))
     return resultados
 
 
@@ -248,9 +263,8 @@ def _resumo_fallback(textos: list[str], campo: str) -> str:
     return f"Análise resumida de {len(textos)} textos. Palavras-chave: {chaves}."
 
 
-def _resumo_claude(textos: list[str], campo: str, rede: str, edital: str) -> str:
-    client = _get_client()
-    if client is None:
+def _resumo_gemini(textos: list[str], campo: str, rede: str, edital: str) -> str:
+    if _get_client() is None:
         return _resumo_fallback(textos, campo)
 
     amostra = [str(t)[:300] for t in textos[:20]]
@@ -266,16 +280,8 @@ def _resumo_claude(textos: list[str], campo: str, rede: str, edital: str) -> str
         "2. Padrões identificados\n"
         "3. Aspectos positivos e desafios"
     )
-    try:
-        msg = client.messages.create(
-            model=MODEL_RESUMO,
-            max_tokens=RESUMO_MAX_TOKENS,
-            messages=[{"role": "user", "content": prompt}],
-        )
-        return msg.content[0].text
-    except Exception as e:
-        print(f"      [erro Claude resumo]: {e}")
-        return _resumo_fallback(textos, campo)
+    resposta = _gemini_call(MODEL_RESUMO, prompt, RESUMO_MAX_TOKENS)
+    return resposta or _resumo_fallback(textos, campo)
 
 
 # ----------------------------------------------------------------------
@@ -324,7 +330,8 @@ def _processar_corte(
         "edital": edital,
         "file_hash": current_hash,
         "total_registros": total,
-        "usando_claude_api": _get_client() is not None,
+        "usando_ia_api": _get_client() is not None,
+        "modelo_ia": "gemini",
         "campos": {},
     }
 
@@ -337,9 +344,9 @@ def _processar_corte(
 
         nuvem_path = nuvens_dir / f"{campo}.png"
         nuvem_rel = _criar_nuvem(textos, nuvem_path)
-        sentimentos = _sentimento_claude(textos)
+        sentimentos = _sentimento_gemini(textos)
         distribuicao = dict(Counter(sentimentos))
-        resumo = _resumo_claude(textos, campo, rede, edital)
+        resumo = _resumo_gemini(textos, campo, rede, edital)
 
         resultados["campos"][campo] = {
             "descricao": descricao,

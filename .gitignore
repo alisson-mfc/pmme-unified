@@ -1,0 +1,21 @@
+.env
+.env.local
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.vscode/
+.idea/
+.DS_Store
+
+# Dados locais — NUNCA comitar (dados pseudonimizados/anonimizados ficam no repo privado pmme-dados)
+dados/raw/*
+!dados/raw/.gitkeep
+dados/processado/*
+!dados/processado/.gitkeep
+analises/*
+!analises/.gitkeep
+
+# Mapeamento de pseudônimos (NUNCA comitar)
+*mapeamento*.csv

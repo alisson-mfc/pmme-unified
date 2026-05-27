@@ -1,0 +1,33 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+#
+# Como usar:
+#   1. Crie um repo no GitHub com este código
+#   2. Acesse https://dashboard.render.com/blueprints
+#   3. "New Blueprint Instance" -> conecta este repo
+#   4. Render detecta este arquivo e cria o web service automaticamente
+#   5. Adicione GITHUB_TOKEN nos Environment Variables do serviço
+#
+# Plano Free: 512MB RAM, dorme após 15min de inatividade.
+
+services:
+  - type: web
+    name: pmme-unified
+    runtime: python
+    plan: free
+    region: oregon  # ou frankfurt/singapore — escolha o mais próximo
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:server --bind 0.0.0.0:$PORT --workers 1 --timeout 120
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: GITHUB_REPO
+        value: alisson-mfc/pmme-dados
+      - key: GITHUB_BRANCH
+        value: main
+      - key: DATA_SOURCE
+        value: remote
+      - key: GITHUB_TOKEN
+        sync: false  # configure manualmente no dashboard (sensível)
+      - key: DASH_DEBUG
+        value: "false"

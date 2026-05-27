@@ -1,0 +1,843 @@
+/* ============================================================
+   PMM-e — Dashboard Unificado
+   Design sóbrio: azul-petróleo + azul acento, sem gradientes,
+   tipografia Inter, cards com sombra sutil.
+   ============================================================ */
+
+:root {
+    --primary: #2c3e50;
+    --primary-dark: #1f2d3d;
+    --accent: #3498db;
+    --accent-dark: #217dbb;
+    --bg: #f7f8fa;
+    --surface: #ffffff;
+    --border: #e5e7eb;
+    --text: #1f2937;
+    --text-muted: #6b7280;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+    --radius: 8px;
+    --header-height: 120px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+.app-root {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.app-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.app-header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 32px 12px;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.app-brand {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+}
+
+.brand-mark {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: -0.01em;
+}
+
+.brand-tagline {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.update-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background-color: #eef2f7;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 12px;
+    color: var(--text);
+}
+
+.badge-label {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.badge-value {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.badge-value--muted {
+    color: var(--text-muted);
+    font-weight: 500;
+    font-style: italic;
+}
+
+.badge-meta {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/* ============================================================
+   TABS
+   ============================================================ */
+.main-tabs {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 32px;
+    width: 100%;
+    /* dcc.Tabs em Dash 4 vem com flex-direction:column por padrão — forçamos row */
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: flex-start !important;
+    align-items: stretch !important;
+    gap: 4px !important;
+    border-bottom: 1px solid var(--border) !important;
+    box-shadow: none !important;
+}
+
+.main-tab {
+    flex: 0 0 auto !important;
+    padding: 12px 24px !important;
+    color: var(--text-muted) !important;
+    background: transparent !important;
+    border: none !important;
+    border-bottom: 2px solid transparent !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    transition: color 0.15s ease, border-color 0.15s ease !important;
+    cursor: pointer;
+    width: auto !important;
+    line-height: 1.2 !important;
+}
+
+.main-tab:hover {
+    color: var(--primary) !important;
+}
+
+.main-tab--selected {
+    color: var(--accent) !important;
+    border-bottom-color: var(--accent) !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+/* ============================================================
+   PÁGINAS
+   ============================================================ */
+.page-content {
+    flex: 1;
+    padding: 28px 0;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.page {
+    padding: 0 32px;
+}
+
+.page-placeholder {
+    background: var(--surface) !important;
+    border: 1px dashed var(--border) !important;
+    border-radius: var(--radius) !important;
+    padding: 32px !important;
+    color: var(--text) !important;
+}
+
+.page-placeholder .alert-heading {
+    color: var(--primary);
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* ============================================================
+   CARDS / KPIS — base reutilizável nas próximas etapas
+   ============================================================ */
+.kpi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    padding: 18px 20px;
+}
+
+.kpi-label {
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.kpi-value {
+    color: var(--primary);
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.chart-card-title {
+    color: var(--primary);
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0 0 16px 0;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+/* ============================================================
+   FILTER BAR — sóbrio, sem gradiente
+   ============================================================ */
+.filter-bar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    padding: 18px 24px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.kpi-counter {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 160px;
+}
+
+.kpi-counter-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.kpi-counter-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1;
+}
+
+.filter-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    flex: 1;
+    justify-content: flex-end;
+}
+
+.filter-control {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 200px;
+}
+
+.filter-control label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0;
+}
+
+/* Dash Dropdown skinning */
+.Select-control,
+.Select.is-open > .Select-control,
+.Select.is-focused > .Select-control {
+    border-color: var(--border) !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+    background: var(--surface) !important;
+}
+
+.Select-control:hover {
+    border-color: var(--accent) !important;
+}
+
+.Select-placeholder,
+.Select-value-label,
+.Select-input > input {
+    color: var(--text) !important;
+    font-size: 14px !important;
+}
+
+.Select-menu-outer {
+    border-color: var(--border) !important;
+    border-radius: 6px !important;
+    box-shadow: var(--shadow-md) !important;
+}
+
+.VirtualizedSelectFocusedOption {
+    background-color: rgba(52, 152, 219, 0.08) !important;
+    color: var(--accent-dark) !important;
+}
+
+/* ============================================================
+   SEÇÕES
+   ============================================================ */
+.dash-section {
+    margin-bottom: 32px;
+}
+
+.section-title {
+    color: var(--primary);
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 16px 0;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--accent);
+    display: inline-block;
+}
+
+.control-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+    max-width: 480px;
+}
+
+.control-row label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0;
+}
+
+/* ============================================================
+   PÁGINA MATRÍCULAS
+   ============================================================ */
+.page--matriculas .row {
+    margin-left: -8px;
+    margin-right: -8px;
+}
+
+.page--matriculas .row > [class*="col-"] {
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+/* Nuvem de palavras */
+.nuvem-wrap {
+    text-align: center;
+    min-height: 240px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nuvem-img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+}
+
+.nuvem-empty {
+    color: var(--text-muted);
+    font-style: italic;
+    padding: 40px;
+}
+
+/* Resumo Markdown */
+.resumo-markdown {
+    color: var(--text);
+    line-height: 1.7;
+}
+
+.resumo-markdown h1,
+.resumo-markdown h2,
+.resumo-markdown h3,
+.resumo-markdown h4,
+.resumo-markdown h5 {
+    color: var(--primary);
+    margin-top: 1.4em;
+    margin-bottom: 0.5em;
+}
+
+.resumo-markdown p {
+    margin-bottom: 1em;
+}
+
+.resumo-markdown strong {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.resumo-markdown ul,
+.resumo-markdown ol {
+    padding-left: 1.4em;
+    margin-bottom: 1em;
+}
+
+.resumo-markdown li {
+    margin-bottom: 0.3em;
+}
+
+/* Mapa hint */
+.map-hint {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: #eef5fb;
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    color: var(--text);
+    font-size: 13px;
+}
+
+/* ============================================================
+   PÁGINA LOGBOOK
+   ============================================================ */
+
+/* Filter bar do logbook - tem layout em 2 níveis (resumo + collapse) */
+.filter-bar--logbook {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+}
+
+.filter-bar--logbook .filter-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.filter-bar--logbook .filter-control {
+    min-width: 220px;
+}
+
+.records-summary {
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    padding-top: 16px;
+    margin-top: 16px;
+    border-top: 1px solid var(--border);
+}
+
+.filter-clear {
+    display: flex;
+    align-items: flex-end;
+}
+
+/* Sub-tabs do logbook */
+.sub-tabs {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    padding: 6px;
+    margin-bottom: 24px;
+    display: flex !important;
+    flex-direction: row !important;
+}
+
+.sub-tab {
+    flex: 1 !important;
+    padding: 12px 16px !important;
+    color: var(--text-muted) !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 6px !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    text-align: center !important;
+    cursor: pointer !important;
+    transition: background 0.15s ease, color 0.15s ease !important;
+    line-height: 1.2 !important;
+}
+
+.sub-tab:hover {
+    color: var(--primary) !important;
+    background: var(--bg) !important;
+}
+
+.sub-tab--selected {
+    color: white !important;
+    background: var(--accent) !important;
+}
+
+/* KPI mini cards (grids 4 ou 3 colunas) */
+.kpi-grid {
+    display: grid;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.kpi-grid--4 {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.kpi-grid--3 {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.kpi-mini-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    padding: 16px 18px;
+}
+
+.kpi-mini-label {
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+}
+
+.kpi-mini-value {
+    color: var(--primary);
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.kpi-mini-sub {
+    color: var(--text-muted);
+    font-size: 11px;
+    margin-top: 6px;
+}
+
+/* Chart card subtitle */
+.chart-card-subtitle {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin: -8px 0 16px 0;
+    line-height: 1.4;
+}
+
+.chart-subsection-title {
+    color: var(--primary);
+    font-size: 14px;
+    font-weight: 600;
+    margin: 24px 0 12px 0;
+}
+
+/* Heatmap table */
+.heatmap-table-wrap {
+    overflow-x: auto;
+}
+
+.heatmap-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.heatmap-table th {
+    padding: 10px 14px;
+    background: var(--bg);
+    color: var(--primary);
+    font-weight: 600;
+    text-align: center;
+    border: 1px solid var(--border);
+}
+
+.heatmap-table td {
+    padding: 12px 14px;
+    text-align: center;
+    border: 1px solid var(--border);
+    font-weight: 500;
+}
+
+.hm-row-label {
+    background: var(--bg);
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.hm-cell--zero {
+    background: #fafbfc;
+    color: var(--text-muted);
+}
+
+.hm-cell--low {
+    background: #eef5fb;
+}
+
+.hm-cell--medium {
+    background: #cfe3f3;
+}
+
+.hm-cell--high {
+    background: #6ba9d4;
+    color: white;
+}
+
+.hm-cell--very-high {
+    background: #217dbb;
+    color: white;
+    font-weight: 700;
+}
+
+/* Profile cards (Trajetória) */
+.profile-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.profile-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+}
+
+.profile-card--empty {
+    opacity: 0.6;
+}
+
+.profile-card-title {
+    color: var(--primary);
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0 0 10px 0;
+}
+
+.profile-card-count {
+    margin-bottom: 12px;
+}
+
+.profile-card-big {
+    color: var(--accent);
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.profile-card-count-sub {
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.profile-stats {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+.profile-stats li {
+    padding: 3px 0;
+}
+
+.profile-stats b {
+    color: var(--text);
+}
+
+/* Topic cards (Modelagem de Tópicos) */
+.topics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+    padding-top: 12px;
+}
+
+.topic-card {
+    padding: 10px 12px;
+    border-left: 3px solid var(--accent);
+    background: #fafbfc;
+    border-radius: 4px;
+}
+
+.topic-name {
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.topic-desc {
+    color: var(--text-muted);
+    font-size: 12px;
+    margin-top: 2px;
+}
+
+.topic-freq {
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 4px;
+}
+
+.topic-examples {
+    color: var(--text-muted);
+    font-size: 11px;
+    margin-top: 4px;
+    font-style: italic;
+}
+
+/* Detail tables (Análise Detalhada CIDs/Procedimentos) */
+.detail-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 4px 0 24px 0;
+}
+
+.detail-table th,
+.detail-table td {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    text-align: left;
+}
+
+.detail-table th {
+    background: var(--bg);
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.detail-table .mono {
+    font-family: ui-monospace, "Cascadia Code", Menlo, Consolas, monospace;
+    font-size: 12px;
+}
+
+.detail-table .row-zebra td {
+    background: #fafbfc;
+}
+
+.detail-table .strong {
+    font-weight: 700;
+    text-align: center;
+}
+
+.detail-table .text-danger {
+    color: var(--danger);
+}
+
+.detail-table .text-warning {
+    color: var(--warning);
+}
+
+.detail-table .text-success {
+    color: var(--success);
+}
+
+/* Expandable details */
+.expandable {
+    margin-top: 18px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: #eef5fb;
+    padding: 12px 14px;
+}
+
+.expandable > summary {
+    cursor: pointer;
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 14px;
+    user-select: none;
+}
+
+.expandable > summary::marker {
+    color: var(--accent);
+}
+
+.info-list {
+    padding-left: 1.2em;
+    margin: 12px 0 4px 0;
+    color: var(--text);
+    font-size: 13px;
+}
+
+.info-list li {
+    margin: 6px 0;
+    line-height: 1.5;
+}
+
+.model-info {
+    color: var(--text);
+    font-size: 13px;
+    background: var(--bg);
+    padding: 10px 14px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+}
+
+.muted-note {
+    color: var(--text-muted);
+    font-style: italic;
+    padding: 12px 0;
+    font-size: 13px;
+}
+
+.mb-3 {
+    margin-bottom: 1rem !important;
+}

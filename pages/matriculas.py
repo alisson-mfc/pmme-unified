@@ -155,44 +155,44 @@ def layout() -> html.Div:
     sec_dados_pessoais = _section(
         "Dados Pessoais",
         dbc.Row([
-            dbc.Col(_chart_card("Distribuição por Raça", "mat-g-raca"), md=6),
-            dbc.Col(_chart_card("Distribuição por Sexo", "mat-g-sexo"), md=6),
+            dbc.Col(_chart_card("Distribuição por Raça", "mat-g-raca"), xl=6),
+            dbc.Col(_chart_card("Distribuição por Sexo", "mat-g-sexo"), xl=6),
         ]),
         dbc.Row([
-            dbc.Col(_chart_card("Distribuição de Idade", "mat-g-idade"), md=6),
-            dbc.Col(_chart_card("Estado Civil", "mat-g-estado-civil"), md=6),
+            dbc.Col(_chart_card("Distribuição de Idade", "mat-g-idade"), xl=6),
+            dbc.Col(_chart_card("Estado Civil", "mat-g-estado-civil"), xl=6),
         ]),
         dbc.Row([
-            dbc.Col(_chart_card("Identidade de Gênero", "mat-g-genero"), md=6),
-            dbc.Col(_chart_card("Orientação Sexual", "mat-g-orientacao"), md=6),
+            dbc.Col(_chart_card("Identidade de Gênero", "mat-g-genero"), xl=6),
+            dbc.Col(_chart_card("Orientação Sexual", "mat-g-orientacao"), xl=6),
         ]),
         dbc.Row([
-            dbc.Col(_chart_card("Profissionais com Nome Social", "mat-g-nome-social"), md=6),
-            dbc.Col(_chart_card("Ações Afirmativas", "mat-g-aa"), md=6),
+            dbc.Col(_chart_card("Profissionais com Nome Social", "mat-g-nome-social"), xl=6),
+            dbc.Col(_chart_card("Ações Afirmativas", "mat-g-aa"), xl=6),
         ]),
     )
 
     sec_formacao = _section(
         "Formação Acadêmica",
         dbc.Row([
-            dbc.Col(_chart_card("Tempo de Graduado (anos)", "mat-g-tempo-graduado"), md=6),
-            dbc.Col(_chart_card("País de Formação", "mat-g-pais-formacao"), md=6),
+            dbc.Col(_chart_card("Tempo de Graduado (anos)", "mat-g-tempo-graduado"), xl=6),
+            dbc.Col(_chart_card("País de Formação", "mat-g-pais-formacao"), xl=6),
         ]),
     )
 
     sec_especialidades = _section(
         "Especialidades e Títulos",
         dbc.Row([
-            dbc.Col(_chart_card("Residências Médicas", "mat-g-residencias"), md=6),
-            dbc.Col(_chart_card("Título de Especialista", "mat-g-titulo-especialista"), md=6),
+            dbc.Col(_chart_card("Residências Médicas", "mat-g-residencias"), xl=6),
+            dbc.Col(_chart_card("Título de Especialista", "mat-g-titulo-especialista"), xl=6),
         ]),
         dbc.Row([
-            dbc.Col(_chart_card("Área — RM Primária", "mat-g-rm-primaria"), md=6),
-            dbc.Col(_chart_card("Área — RM Secundária", "mat-g-rm-secundaria"), md=6),
+            dbc.Col(_chart_card("Área — RM Primária", "mat-g-rm-primaria"), xl=6),
+            dbc.Col(_chart_card("Área — RM Secundária", "mat-g-rm-secundaria"), xl=6),
         ]),
         dbc.Row([
-            dbc.Col(_chart_card("Área — Título Especialista Primário", "mat-g-titulo-primario"), md=6),
-            dbc.Col(_chart_card("Área — Título Especialista Secundário", "mat-g-titulo-secundario"), md=6),
+            dbc.Col(_chart_card("Área — Título Especialista Primário", "mat-g-titulo-primario"), xl=6),
+            dbc.Col(_chart_card("Área — Título Especialista Secundário", "mat-g-titulo-secundario"), xl=6),
         ]),
         dbc.Row([
             dbc.Col(_chart_card("Cursos de Aprimoramento", "mat-g-cursos"), md=12),
@@ -203,8 +203,8 @@ def layout() -> html.Div:
         "Distribuição Geográfica",
         _chart_card("Distribuição Regional por Momento", "mat-g-regioes"),
         dbc.Row([
-            dbc.Col(_chart_card("Região de Nascimento", "mat-g-regiao-nascimento"), md=6),
-            dbc.Col(_chart_card("Região da Vaga Principal", "mat-g-regiao-vaga"), md=6),
+            dbc.Col(_chart_card("Região de Nascimento", "mat-g-regiao-nascimento"), xl=6),
+            dbc.Col(_chart_card("Região da Vaga Principal", "mat-g-regiao-vaga"), xl=6),
         ]),
     )
 
@@ -321,13 +321,45 @@ def layout() -> html.Div:
         className="page page--matriculas",
         children=[
             filter_bar,
-            sec_dados_pessoais,
-            sec_formacao,
-            sec_especialidades,
-            sec_geografica,
-            sec_mapas,
-            sec_apropriacao,
-            sec_qualitativa,
+            dcc.Tabs(
+                id="mat-subtabs",
+                value="dados-gerais",
+                className="sub-tabs",
+                children=[
+                    dcc.Tab(
+                        label="Dados Gerais",
+                        value="dados-gerais",
+                        className="sub-tab",
+                        selected_className="sub-tab--selected",
+                        children=html.Div([
+                            sec_dados_pessoais,
+                            sec_formacao,
+                            sec_especialidades,
+                        ]),
+                    ),
+                    dcc.Tab(
+                        label="Geografia",
+                        value="geografia",
+                        className="sub-tab",
+                        selected_className="sub-tab--selected",
+                        children=html.Div([sec_geografica, sec_mapas]),
+                    ),
+                    dcc.Tab(
+                        label="Temas",
+                        value="temas",
+                        className="sub-tab",
+                        selected_className="sub-tab--selected",
+                        children=sec_apropriacao,
+                    ),
+                    dcc.Tab(
+                        label="Qualitativa",
+                        value="qualitativa",
+                        className="sub-tab",
+                        selected_className="sub-tab--selected",
+                        children=sec_qualitativa,
+                    ),
+                ],
+            ),
         ],
     )
 

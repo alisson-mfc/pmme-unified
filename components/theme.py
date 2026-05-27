@@ -42,7 +42,7 @@ CATEGORICAL = [
 # Sequência divergente para sentimentos (Positivo / Neutro / Negativo)
 SENTIMENT = {
     "Positivo": "#10b981",
-    "Neutro": "#9ca3af",
+    "Neutro": "#f59e0b",
     "Negativo": "#ef4444",
 }
 

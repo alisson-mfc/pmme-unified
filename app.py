@@ -18,7 +18,7 @@ from components.header import header, update_badge_content
 from data.loader import format_data_atualizacao, load_meta
 from pages import logbook, matriculas
 
-load_dotenv()
+load_dotenv(override=True)
 
 app = dash.Dash(
     __name__,
@@ -26,7 +26,7 @@ app = dash.Dash(
         dbc.themes.BOOTSTRAP,
         "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
     ],
-    title="PMM-e — Análise de Dados",
+    title="PMM-e - Análise de Dados",
     suppress_callback_exceptions=True,
     update_title=None,
 )

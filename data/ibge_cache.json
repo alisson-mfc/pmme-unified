@@ -1,0 +1,627 @@
+{
+  "110002": {
+    "cidade": "Ariquemes",
+    "uf": "Rondônia",
+    "uf_sigla": "RO"
+  },
+  "110020": {
+    "cidade": "Porto Velho",
+    "uf": "Rondônia",
+    "uf_sigla": "RO"
+  },
+  "110028": {
+    "cidade": "Rolim de Moura",
+    "uf": "Rondônia",
+    "uf_sigla": "RO"
+  },
+  "110030": {
+    "cidade": "Vilhena",
+    "uf": "Rondônia",
+    "uf_sigla": "RO"
+  },
+  "130250": {
+    "cidade": "Manacapuru",
+    "uf": "Amazonas",
+    "uf_sigla": "AM"
+  },
+  "130260": {
+    "cidade": "Manaus",
+    "uf": "Amazonas",
+    "uf_sigla": "AM"
+  },
+  "130395": {
+    "cidade": "São Sebastião do Uatumã",
+    "uf": "Amazonas",
+    "uf_sigla": "AM"
+  },
+  "130406": {
+    "cidade": "Tabatinga",
+    "uf": "Amazonas",
+    "uf_sigla": "AM"
+  },
+  "140010": {
+    "cidade": "Boa Vista",
+    "uf": "Roraima",
+    "uf_sigla": "RR"
+  },
+  "140047": {
+    "cidade": "Rorainópolis",
+    "uf": "Roraima",
+    "uf_sigla": "RR"
+  },
+  "150140": {
+    "cidade": "Belém",
+    "uf": "Pará",
+    "uf_sigla": "PA"
+  },
+  "150220": {
+    "cidade": "Capanema",
+    "uf": "Pará",
+    "uf_sigla": "PA"
+  },
+  "150420": {
+    "cidade": "Marabá",
+    "uf": "Pará",
+    "uf_sigla": "PA"
+  },
+  "150470": {
+    "cidade": "Moju",
+    "uf": "Pará",
+    "uf_sigla": "PA"
+  },
+  "150803": {
+    "cidade": "Tracuateua",
+    "uf": "Pará",
+    "uf_sigla": "PA"
+  },
+  "150810": {
+    "cidade": "Tucuruí",
+    "uf": "Pará",
+    "uf_sigla": "PA"
+  },
+  "160030": {
+    "cidade": "Macapá",
+    "uf": "Amapá",
+    "uf_sigla": "AP"
+  },
+  "210005": {
+    "cidade": "Açailândia",
+    "uf": "Maranhão",
+    "uf_sigla": "MA"
+  },
+  "210230": {
+    "cidade": "Buriti Bravo",
+    "uf": "Maranhão",
+    "uf_sigla": "MA"
+  },
+  "210300": {
+    "cidade": "Caxias",
+    "uf": "Maranhão",
+    "uf_sigla": "MA"
+  },
+  "210530": {
+    "cidade": "Imperatriz",
+    "uf": "Maranhão",
+    "uf_sigla": "MA"
+  },
+  "210540": {
+    "cidade": "Itapecuru Mirim",
+    "uf": "Maranhão",
+    "uf_sigla": "MA"
+  },
+  "210820": {
+    "cidade": "Pedreiras",
+    "uf": "Maranhão",
+    "uf_sigla": "MA"
+  },
+  "210860": {
+    "cidade": "Pinheiro",
+    "uf": "Maranhão",
+    "uf_sigla": "MA"
+  },
+  "211050": {
+    "cidade": "São Bento",
+    "uf": "Maranhão",
+    "uf_sigla": "MA"
+  },
+  "211130": {
+    "cidade": "São Luís",
+    "uf": "Maranhão",
+    "uf_sigla": "MA"
+  },
+  "211220": {
+    "cidade": "Timon",
+    "uf": "Maranhão",
+    "uf_sigla": "MA"
+  },
+  "220220": {
+    "cidade": "Campo Maior",
+    "uf": "Piauí",
+    "uf_sigla": "PI"
+  },
+  "220390": {
+    "cidade": "Floriano",
+    "uf": "Piauí",
+    "uf_sigla": "PI"
+  },
+  "220700": {
+    "cidade": "Oeiras",
+    "uf": "Piauí",
+    "uf_sigla": "PI"
+  },
+  "220770": {
+    "cidade": "Parnaíba",
+    "uf": "Piauí",
+    "uf_sigla": "PI"
+  },
+  "220800": {
+    "cidade": "Picos",
+    "uf": "Piauí",
+    "uf_sigla": "PI"
+  },
+  "220840": {
+    "cidade": "Piripiri",
+    "uf": "Piauí",
+    "uf_sigla": "PI"
+  },
+  "221060": {
+    "cidade": "São Raimundo Nonato",
+    "uf": "Piauí",
+    "uf_sigla": "PI"
+  },
+  "221100": {
+    "cidade": "Teresina",
+    "uf": "Piauí",
+    "uf_sigla": "PI"
+  },
+  "221130": {
+    "cidade": "Valença do Piauí",
+    "uf": "Piauí",
+    "uf_sigla": "PI"
+  },
+  "230020": {
+    "cidade": "Acaraú",
+    "uf": "Ceará",
+    "uf_sigla": "CE"
+  },
+  "230190": {
+    "cidade": "Barbalha",
+    "uf": "Ceará",
+    "uf_sigla": "CE"
+  },
+  "230250": {
+    "cidade": "Brejo Santo",
+    "uf": "Ceará",
+    "uf_sigla": "CE"
+  },
+  "230260": {
+    "cidade": "Camocim",
+    "uf": "Ceará",
+    "uf_sigla": "CE"
+  },
+  "230280": {
+    "cidade": "Canindé",
+    "uf": "Ceará",
+    "uf_sigla": "CE"
+  },
+  "230370": {
+    "cidade": "Caucaia",
+    "uf": "Ceará",
+    "uf_sigla": "CE"
+  },
+  "230410": {
+    "cidade": "Crateús",
+    "uf": "Ceará",
+    "uf_sigla": "CE"
+  },
+  "230420": {
+    "cidade": "Crato",
+    "uf": "Ceará",
+    "uf_sigla": "CE"
+  },
+  "230440": {
+    "cidade": "Fortaleza",
+    "uf": "Ceará",
+    "uf_sigla": "CE"
+  },
+  "230540": {
+    "cidade": "Icó",
+    "uf": "Ceará",
+    "uf_sigla": "CE"
+  },
+  "230550": {
+    "cidade": "Iguatu",
+    "uf": "Ceará",
+    "uf_sigla": "CE"
+  },
+  "230690": {
+    "cidade": "Jaguaribe",
+    "uf": "Ceará",
+    "uf_sigla": "CE"
+  },
+  "230765": {
+    "cidade": "Maracanaú",
+    "uf": "Ceará",
+    "uf_sigla": "CE"
+  },
+  "230810": {
+    "cidade": "Mauriti",
+    "uf": "Ceará",
+    "uf_sigla": "CE"
+  },
+  "231130": {
+    "cidade": "Quixadá",
+    "uf": "Ceará",
+    "uf_sigla": "CE"
+  },
+  "231180": {
+    "cidade": "Russas",
+    "uf": "Ceará",
+    "uf_sigla": "CE"
+  },
+  "231290": {
+    "cidade": "Sobral",
+    "uf": "Ceará",
+    "uf_sigla": "CE"
+  },
+  "231340": {
+    "cidade": "Tianguá",
+    "uf": "Ceará",
+    "uf_sigla": "CE"
+  },
+  "240020": {
+    "cidade": "Assú",
+    "uf": "Rio Grande do Norte",
+    "uf_sigla": "RN"
+  },
+  "240050": {
+    "cidade": "Alexandria",
+    "uf": "Rio Grande do Norte",
+    "uf_sigla": "RN"
+  },
+  "240200": {
+    "cidade": "Caicó",
+    "uf": "Rio Grande do Norte",
+    "uf_sigla": "RN"
+  },
+  "240260": {
+    "cidade": "Ceará-Mirim",
+    "uf": "Rio Grande do Norte",
+    "uf_sigla": "RN"
+  },
+  "240580": {
+    "cidade": "João Câmara",
+    "uf": "Rio Grande do Norte",
+    "uf_sigla": "RN"
+  },
+  "240800": {
+    "cidade": "Mossoró",
+    "uf": "Rio Grande do Norte",
+    "uf_sigla": "RN"
+  },
+  "240810": {
+    "cidade": "Natal",
+    "uf": "Rio Grande do Norte",
+    "uf_sigla": "RN"
+  },
+  "241120": {
+    "cidade": "Santa Cruz",
+    "uf": "Rio Grande do Norte",
+    "uf_sigla": "RN"
+  },
+  "241220": {
+    "cidade": "São José de Mipibu",
+    "uf": "Rio Grande do Norte",
+    "uf_sigla": "RN"
+  },
+  "241250": {
+    "cidade": "São Miguel",
+    "uf": "Rio Grande do Norte",
+    "uf_sigla": "RN"
+  },
+  "250750": {
+    "cidade": "João Pessoa",
+    "uf": "Paraíba",
+    "uf_sigla": "PB"
+  },
+  "251080": {
+    "cidade": "Patos",
+    "uf": "Paraíba",
+    "uf_sigla": "PB"
+  },
+  "251620": {
+    "cidade": "Sousa",
+    "uf": "Paraíba",
+    "uf_sigla": "PB"
+  },
+  "260010": {
+    "cidade": "Afogados da Ingazeira",
+    "uf": "Pernambuco",
+    "uf_sigla": "PE"
+  },
+  "260990": {
+    "cidade": "Ouricuri",
+    "uf": "Pernambuco",
+    "uf_sigla": "PE"
+  },
+  "261000": {
+    "cidade": "Palmares",
+    "uf": "Pernambuco",
+    "uf_sigla": "PE"
+  },
+  "261160": {
+    "cidade": "Recife",
+    "uf": "Pernambuco",
+    "uf_sigla": "PE"
+  },
+  "270030": {
+    "cidade": "Arapiraca",
+    "uf": "Alagoas",
+    "uf_sigla": "AL"
+  },
+  "270240": {
+    "cidade": "Delmiro Gouveia",
+    "uf": "Alagoas",
+    "uf_sigla": "AL"
+  },
+  "270430": {
+    "cidade": "Maceió",
+    "uf": "Alagoas",
+    "uf_sigla": "AL"
+  },
+  "280030": {
+    "cidade": "Aracaju",
+    "uf": "Sergipe",
+    "uf_sigla": "SE"
+  },
+  "280350": {
+    "cidade": "Lagarto",
+    "uf": "Sergipe",
+    "uf_sigla": "SE"
+  },
+  "290070": {
+    "cidade": "Alagoinhas",
+    "uf": "Bahia",
+    "uf_sigla": "BA"
+  },
+  "291072": {
+    "cidade": "Eunápolis",
+    "uf": "Bahia",
+    "uf_sigla": "BA"
+  },
+  "291170": {
+    "cidade": "Guanambi",
+    "uf": "Bahia",
+    "uf_sigla": "BA"
+  },
+  "291460": {
+    "cidade": "Irecê",
+    "uf": "Bahia",
+    "uf_sigla": "BA"
+  },
+  "291470": {
+    "cidade": "Itaberaba",
+    "uf": "Bahia",
+    "uf_sigla": "BA"
+  },
+  "291480": {
+    "cidade": "Itabuna",
+    "uf": "Bahia",
+    "uf_sigla": "BA"
+  },
+  "291840": {
+    "cidade": "Juazeiro",
+    "uf": "Bahia",
+    "uf_sigla": "BA"
+  },
+  "292870": {
+    "cidade": "Santo Antônio de Jesus",
+    "uf": "Bahia",
+    "uf_sigla": "BA"
+  },
+  "293010": {
+    "cidade": "Senhor do Bonfim",
+    "uf": "Bahia",
+    "uf_sigla": "BA"
+  },
+  "293050": {
+    "cidade": "Serrinha",
+    "uf": "Bahia",
+    "uf_sigla": "BA"
+  },
+  "293135": {
+    "cidade": "Teixeira de Freitas",
+    "uf": "Bahia",
+    "uf_sigla": "BA"
+  },
+  "293290": {
+    "cidade": "Valença",
+    "uf": "Bahia",
+    "uf_sigla": "BA"
+  },
+  "293330": {
+    "cidade": "Vitória da Conquista",
+    "uf": "Bahia",
+    "uf_sigla": "BA"
+  },
+  "310090": {
+    "cidade": "Águas Formosas",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "310620": {
+    "cidade": "Belo Horizonte",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "310730": {
+    "cidade": "Bocaiúva",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "311230": {
+    "cidade": "Capelinha",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "311340": {
+    "cidade": "Caratinga",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "311940": {
+    "cidade": "Coronel Fabriciano",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "312160": {
+    "cidade": "Diamantina",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "312670": {
+    "cidade": "Francisco Sá",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "313130": {
+    "cidade": "Ipatinga",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "313520": {
+    "cidade": "Januária",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "313868": {
+    "cidade": "Luislândia",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "314795": {
+    "cidade": "Patis",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "314800": {
+    "cidade": "Patos de Minas",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "315220": {
+    "cidade": "Porteirinha",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "316110": {
+    "cidade": "São Francisco",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "316860": {
+    "cidade": "Teófilo Otoni",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "317010": {
+    "cidade": "Uberaba",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "317020": {
+    "cidade": "Uberlândia",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "317080": {
+    "cidade": "Várzea da Palma",
+    "uf": "Minas Gerais",
+    "uf_sigla": "MG"
+  },
+  "330330": {
+    "cidade": "Niterói",
+    "uf": "Rio de Janeiro",
+    "uf_sigla": "RJ"
+  },
+  "330510": {
+    "cidade": "São João de Meriti",
+    "uf": "Rio de Janeiro",
+    "uf_sigla": "RJ"
+  },
+  "350600": {
+    "cidade": "Bauru",
+    "uf": "São Paulo",
+    "uf_sigla": "SP"
+  },
+  "350750": {
+    "cidade": "Botucatu",
+    "uf": "São Paulo",
+    "uf_sigla": "SP"
+  },
+  "350950": {
+    "cidade": "Campinas",
+    "uf": "São Paulo",
+    "uf_sigla": "SP"
+  },
+  "351050": {
+    "cidade": "Caraguatatuba",
+    "uf": "São Paulo",
+    "uf_sigla": "SP"
+  },
+  "351880": {
+    "cidade": "Guarulhos",
+    "uf": "São Paulo",
+    "uf_sigla": "SP"
+  },
+  "355030": {
+    "cidade": "São Paulo",
+    "uf": "São Paulo",
+    "uf_sigla": "SP"
+  },
+  "431490": {
+    "cidade": "Porto Alegre",
+    "uf": "Rio Grande do Sul",
+    "uf_sigla": "RS"
+  },
+  "431690": {
+    "cidade": "Santa Maria",
+    "uf": "Rio Grande do Sul",
+    "uf_sigla": "RS"
+  },
+  "510250": {
+    "cidade": "Cáceres",
+    "uf": "Mato Grosso",
+    "uf_sigla": "MT"
+  },
+  "520140": {
+    "cidade": "Aparecida de Goiânia",
+    "uf": "Goiás",
+    "uf_sigla": "GO"
+  },
+  "520870": {
+    "cidade": "Goiânia",
+    "uf": "Goiás",
+    "uf_sigla": "GO"
+  },
+  "520970": {
+    "cidade": "Hidrolândia",
+    "uf": "Goiás",
+    "uf_sigla": "GO"
+  },
+  "521020": {
+    "cidade": "Iporá",
+    "uf": "Goiás",
+    "uf_sigla": "GO"
+  },
+  "521250": {
+    "cidade": "Luziânia",
+    "uf": "Goiás",
+    "uf_sigla": "GO"
+  },
+  "522045": {
+    "cidade": "Senador Canedo",
+    "uf": "Goiás",
+    "uf_sigla": "GO"
+  }
+}

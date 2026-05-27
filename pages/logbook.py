@@ -15,6 +15,8 @@ from dash import Input, Output, callback, dcc, html
 
 from components import charts, theme
 from data import loader, logbook_agg
+from data.constants import ESTADOS_SIGLAS, SIGLAS_ESTADOS
+from data.geojson import geojson_brasil, geojson_municipios
 from data.logbook_agg import DIF_COLORS
 
 
@@ -31,6 +33,26 @@ def _kpi_card(label: str, value_id: str, color: str | None = None, subtitle: str
             html.Div(subtitle, className="kpi-mini-sub") if subtitle else None,
         ],
     )
+
+
+def _help_icon(target_id: str, content) -> list:
+    """Retorna um span com '?' que mostra tooltip via CSS no hover/focus.
+
+    `content` pode ser string ou componente. É renderizado dentro de um filho
+    `.help-content` que é escondido por CSS até o usuário fazer hover/focus.
+    O parâmetro `target_id` é mantido só por compatibilidade (não é usado).
+    """
+    return [
+        html.Span(
+            tabIndex=0,
+            className="help-trigger",
+            **{"aria-label": "Mais informações"},
+            children=[
+                html.Span("?", className="help-icon"),
+                html.Span(content, className="help-content", role="tooltip"),
+            ],
+        ),
+    ]
 
 
 def _chart_card(title: str, graph_id: str) -> html.Div:
@@ -199,6 +221,48 @@ def _subtab_visao_geral() -> html.Div:
 
 
 # ----------------------------------------------------------------------
+# Sub-aba Geografia
+# ----------------------------------------------------------------------
+def _subtab_geografia() -> html.Div:
+    return html.Div(
+        className="dash-section",
+        children=[
+            html.Div(
+                id="log-mapa-voltar-wrap",
+                className="control-row",
+                style={"display": "none"},
+                children=[
+                    dbc.Button(
+                        "← Voltar para o mapa do Brasil",
+                        id="log-btn-voltar-mapa",
+                        color="primary",
+                        outline=True,
+                        size="sm",
+                    ),
+                ],
+            ),
+            html.Div(
+                className="chart-card",
+                children=[
+                    html.H3(id="log-mapa-title", className="chart-card-title"),
+                    dcc.Graph(
+                        id="log-g-mapa",
+                        config={"displayModeBar": False, "responsive": True},
+                        style={"width": "100%"},
+                    ),
+                    html.Div(
+                        "Clique num estado para ver os municípios.",
+                        id="log-mapa-hint",
+                        className="map-hint",
+                    ),
+                ],
+            ),
+            dcc.Store(id="log-mapa-estado-selecionado", data=None),
+        ],
+    )
+
+
+# ----------------------------------------------------------------------
 # Sub-aba Análise Diagnóstica
 # ----------------------------------------------------------------------
 def _subtab_diagnostica() -> html.Div:
@@ -215,9 +279,20 @@ def _subtab_diagnostica() -> html.Div:
             html.Div(className="chart-card", children=[
                 html.H3("Análise de Complexidade vs Proficiência (Mapa de Calor)",
                         className="chart-card-title"),
-                html.P("Cruzamento entre Nível de Desenvolvimento (linhas) e Dificuldade dos "
-                       "Procedimentos (colunas).",
-                       className="chart-card-subtitle"),
+                html.P([
+                    "Cruzamento entre Nível de Desenvolvimento (linhas) e Dificuldade dos "
+                    "Procedimentos (colunas). ",
+                    *_help_icon(
+                        "tip-heatmap",
+                        html.Span([
+                            html.B("Interpretação: "),
+                            "Espera-se uma diagonal forte (Nível 1 com Dificuldade Extrema, "
+                            "Nível 5 com Dificuldade Fácil). Valores altos fora da diagonal "
+                            "podem indicar sobrecarga ou oportunidades de aprendizado "
+                            "observacional.",
+                        ]),
+                    ),
+                ], className="chart-card-subtitle"),
                 html.Div(id="log-heatmap-table", className="heatmap-table-wrap"),
             ]),
             html.Div(className="chart-card", children=[
@@ -255,10 +330,21 @@ def _subtab_preditiva() -> html.Div:
         children=[
             # SEÇÃO 1: Modelagem de Tópicos
             html.Div(className="chart-card", children=[
-                html.H3("Modelagem de Tópicos — Procedimentos Não Listados", className="chart-card-title"),
-                html.P("Agrupamento de procedimentos não padronizados por temas comuns usando IA "
-                       "(Claude).",
-                       className="chart-card-subtitle"),
+                html.H3("Modelagem de Tópicos - Procedimentos Não Listados", className="chart-card-title"),
+                html.P([
+                    "Agrupamento de procedimentos não padronizados por temas comuns usando IA "
+                    "(Claude). ",
+                    *_help_icon(
+                        "tip-topicos",
+                        html.Span([
+                            html.B("Objetivo: "),
+                            "entender o que está sendo registrado fora do padrão. "
+                            "Procedimentos sem código específico são descritos pelos médicos "
+                            "aprimorandos em campo livre de texto. A IA analisa e agrupa esses "
+                            "textos por temática comum.",
+                        ]),
+                    ),
+                ], className="chart-card-subtitle"),
                 html.Div(id="log-pred-topicos-kpis", className="kpi-grid kpi-grid--3 mb-3"),
                 dcc.Graph(id="log-g-topicos",
                           config={"displayModeBar": False, "responsive": True}),
@@ -273,9 +359,36 @@ def _subtab_preditiva() -> html.Div:
             # SEÇÃO 2: Trajetória de Aprendizado
             html.Div(className="chart-card", children=[
                 html.H3("Análise de Trajetória de Aprendizado", className="chart-card-title"),
-                html.P("Perfis de aprimorandos com base em volume, complexidade e variedade de "
-                       "procedimentos.",
-                       className="chart-card-subtitle"),
+                html.P([
+                    "Identificação de perfis de aprimorandos baseado em volume, complexidade, "
+                    "variedade de procedimentos e velocidade de evolução. ",
+                    *_help_icon(
+                        "tip-trajetoria",
+                        html.Div([
+                            html.Div(html.B("Interpretação dos Perfis"),
+                                     style={"marginBottom": "6px"}),
+                            html.Div([
+                                html.B("Alto volume, baixa complexidade: "),
+                                "muitos procedimentos, dificuldade média baixa. Bom para "
+                                "consolidação de habilidades básicas.",
+                            ], style={"marginBottom": "4px"}),
+                            html.Div([
+                                html.B("Especialista de alta complexidade: "),
+                                "focado em poucos CIDs/procedimentos, mas com alta "
+                                "dificuldade. Requer mais supervisão.",
+                            ], style={"marginBottom": "4px"}),
+                            html.Div([
+                                html.B("Evolução rápida: "),
+                                "profissionais que rapidamente subiram na escala Ten Cate. "
+                                "Excelente potencial de aprendizado.",
+                            ], style={"marginBottom": "4px"}),
+                            html.Div([
+                                html.B("Generalista em desenvolvimento: "),
+                                "perfil em transição com desenvolvimento balanceado.",
+                            ]),
+                        ]),
+                    ),
+                ], className="chart-card-subtitle"),
                 dcc.Graph(id="log-g-trajetoria",
                           config={"displayModeBar": False, "responsive": True}),
                 html.Div(id="log-pred-perfis-cards", className="profile-cards-grid"),
@@ -283,9 +396,25 @@ def _subtab_preditiva() -> html.Div:
             # SEÇÃO 3: Modelo Preditivo
             html.Div(className="chart-card", children=[
                 html.H3("Modelo Preditivo de Dificuldade", className="chart-card-title"),
-                html.P("Predição de dificuldade (1–5) baseada em CID e procedimento. "
-                       "Modelo: Random Forest treinado offline.",
-                       className="chart-card-subtitle"),
+                html.P([
+                    "Predição de dificuldade (1–5) baseada em CID, procedimento e contexto "
+                    "clínico. ",
+                    *_help_icon(
+                        "tip-modelo-preditivo",
+                        html.Div([
+                            html.Div([
+                                html.B("Interpretação: "),
+                                "ajuda a identificar quais CIDs/procedimentos são "
+                                "consistentemente classificados como \"difíceis\".",
+                            ], style={"marginBottom": "6px"}),
+                            html.Div([
+                                html.B("Nota: "),
+                                "CIDs com dificuldade média ≥ 3,5 podem exigir mais "
+                                "supervisão, treinamento específico ou recursos adicionais.",
+                            ]),
+                        ]),
+                    ),
+                ], className="chart-card-subtitle"),
                 html.Div(id="log-pred-modelo-info", className="model-info"),
                 html.H4("CIDs com Maior Dificuldade Predita (Top 15)", className="chart-subsection-title"),
                 dcc.Graph(id="log-g-cid-pred",
@@ -335,6 +464,9 @@ def layout() -> html.Div:
                     dcc.Tab(label="Visão Geral", value="visao-geral",
                             className="sub-tab", selected_className="sub-tab--selected",
                             children=_subtab_visao_geral()),
+                    dcc.Tab(label="Geografia", value="geografia",
+                            className="sub-tab", selected_className="sub-tab--selected",
+                            children=_subtab_geografia()),
                     dcc.Tab(label="Análise Diagnóstica", value="diagnostica",
                             className="sub-tab", selected_className="sub-tab--selected",
                             children=_subtab_diagnostica()),
@@ -454,14 +586,16 @@ def _update_visao_geral(rede, di, df, curso, inst, hosp):
         _fmt(agg["media_dev"], decimals=2),
         _fmt(agg["media_dif"], decimals=2),
         charts.line_chart(agg["temporal"], y_title="Registros", fill=True),
-        charts.bar_chart(agg["instituicoes_top"], titulo="", horizontal=True, sort_by_value=False),
+        charts.bar_chart(agg["instituicoes_top"], titulo="", horizontal=True,
+                         sort_by_value=False, hover_texts=agg.get("instituicoes_top_hover")),
         charts.bar_chart(agg["niveis"], titulo="", sort_by_value=False, show_percent=False,
                          horizontal=False, color=theme.PRIMARY),
         charts.bar_chart(dificuldade_items, titulo="", sort_by_value=False, show_percent=False,
                          horizontal=False, color=dif_cores),
         charts.bar_chart(agg["procedimentos_top"], titulo="", horizontal=True, sort_by_value=False),
         charts.bar_chart(agg["cids_top"], titulo="", horizontal=True, sort_by_value=False),
-        charts.bar_chart(agg["hospitais_top"], titulo="", horizontal=True, sort_by_value=False),
+        charts.bar_chart(agg["hospitais_top"], titulo="", horizontal=True,
+                         sort_by_value=False, hover_texts=agg.get("hospitais_top_hover")),
         charts.bar_chart(agg["cursos_top"], titulo="", horizontal=True, sort_by_value=False),
     )
 
@@ -798,7 +932,8 @@ def _update_preditiva(rede, di, df, curso, inst, hosp):
                 cores.append("#10b981")
         return charts.bar_chart(items, titulo="", horizontal=True,
                                 sort_by_value=False, show_percent=False,
-                                color=cores, max_categorias=15)
+                                color=cores, max_categorias=15,
+                                truncate_labels=35, x_max=5.5)
 
     cid_pred_fig = _to_bar(cid_sorted, "cid")
     proc_pred_fig = _to_bar(proc_sorted, "procedimento")
@@ -812,3 +947,115 @@ def _update_preditiva(rede, di, df, curso, inst, hosp):
         modelo_info, cid_pred_fig, proc_pred_fig,
         cid_tabela, proc_tabela,
     )
+
+
+# ----------------------------------------------------------------------
+# GEOGRAFIA — mapa coroplético com drilldown estado → municípios
+# ----------------------------------------------------------------------
+@callback(
+    Output("log-g-mapa", "figure"),
+    Output("log-mapa-title", "children"),
+    Output("log-mapa-hint", "style"),
+    Output("log-mapa-voltar-wrap", "style"),
+    Input("log-filtro-rede", "value"),
+    Input("log-data-inicio", "date"),
+    Input("log-data-fim", "date"),
+    Input("log-filtro-curso", "value"),
+    Input("log-filtro-inst", "value"),
+    Input("log-filtro-hosp", "value"),
+    Input("log-mapa-estado-selecionado", "data"),
+)
+def _update_log_mapa(rede, di, df, curso, inst, hosp, estado_sel):
+    agg = logbook_agg.aggregate_for(
+        rede or "Todas", di, df, curso or "Todos", inst or "Todas", hosp or "Todos",
+    )
+    hint_show = {"display": "block"} if not estado_sel else {"display": "none"}
+    voltar_show = {"display": "block"} if estado_sel else {"display": "none"}
+
+    if estado_sel:
+        sigla = ESTADOS_SIGLAS.get(estado_sel)
+        if not sigla:
+            return (charts._empty_fig(), f"Estado não reconhecido: {estado_sel}",
+                    hint_show, voltar_show)
+        geo = geojson_municipios(sigla)
+        if not geo.get("features"):
+            return (charts._empty_fig(), f"Falha ao carregar municípios de {estado_sel}",
+                    hint_show, voltar_show)
+
+        cidades_count = agg["geo_municipios"].get(sigla, {})
+        locations, z_values, hover_text = [], [], []
+        for feat in geo["features"]:
+            nome = feat.get("properties", {}).get("name")
+            if not nome:
+                continue
+            count = cidades_count.get(nome, 0)
+            locations.append(nome)
+            z_values.append(count)
+            if count > 0:
+                hover_text.append(f"<b>{nome}</b><br>{count:,} registros".replace(",", "."))
+            else:
+                hover_text.append(f"<b>{nome}</b><br>Sem registros")
+
+        import plotly.graph_objects as go
+        fig = go.Figure(go.Choropleth(
+            geojson=geo,
+            locations=locations,
+            z=z_values,
+            featureidkey="properties.name",
+            colorscale=[
+                [0.0, "#E0E0E0"], [0.000001, "#dbe9f6"], [1.0, theme.ACCENT_DARK],
+            ],
+            showscale=True,
+            text=hover_text,
+            hoverinfo="text",
+            marker={"line": {"color": "rgba(0,0,0,0.3)", "width": 0.5}},
+        ))
+        fig.update_layout(
+            **theme.plotly_layout_defaults(),
+            height=600,
+            margin={"l": 0, "r": 0, "t": 20, "b": 0},
+            geo={"fitbounds": "locations", "visible": False, "bgcolor": theme.SURFACE},
+        )
+        total = sum(z_values)
+        return (fig, f"Registros por município — {estado_sel} ({total:,} registros)".replace(",", "."),
+                hint_show, voltar_show)
+
+    # Mapa nacional: contagem por estado (converte sigla → nome do estado pra match geojson)
+    estados_count = {
+        SIGLAS_ESTADOS.get(s, s): c for s, c in agg["geo_estados"].items()
+    }
+    total = sum(estados_count.values())
+    fig = charts.choropleth_brasil(
+        estados_count,
+        "",
+        geojson_brasil(),
+    )
+    return (fig, f"Registros por estado ({total:,} registros)".replace(",", "."),
+            hint_show, voltar_show)
+
+
+@callback(
+    Output("log-mapa-estado-selecionado", "data"),
+    Input("log-g-mapa", "clickData"),
+    Input("log-btn-voltar-mapa", "n_clicks"),
+    Input("log-filtro-rede", "value"),
+    Input("log-data-inicio", "date"),
+    Input("log-data-fim", "date"),
+    Input("log-filtro-curso", "value"),
+    Input("log-filtro-inst", "value"),
+    Input("log-filtro-hosp", "value"),
+    prevent_initial_call=True,
+)
+def _on_log_mapa_interaction(click_data, _n_voltar, *_filters):
+    from dash import ctx
+    triggered = ctx.triggered_id
+    # Qualquer mudança de filtro ou clique no botão "Voltar" → limpa estado
+    if triggered != "log-g-mapa":
+        return None
+    if click_data:
+        try:
+            return click_data["points"][0]["location"]
+        except (KeyError, IndexError, TypeError):
+            pass
+    from dash import no_update
+    return no_update

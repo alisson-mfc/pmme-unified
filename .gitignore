@@ -19,3 +19,6 @@ analises/*
 
 # Mapeamento de pseudônimos (NUNCA comitar)
 *mapeamento*.csv
+
+# Cache runtime de nuvens (baixado do pmme-dados sob demanda)
+assets/nuvens/

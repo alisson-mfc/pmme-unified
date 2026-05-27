@@ -44,12 +44,17 @@ def bar_chart(
     horizontal: bool | None = None,
     sort_by_value: bool = True,
     show_percent: bool = True,
+    hover_texts: list[str] | None = None,
+    truncate_labels: int | None = None,
+    x_max: float | None = None,
 ) -> go.Figure:
     """Bar chart com escolha automática de orientação (horizontal se rótulos longos).
 
     `color` aceita string única ou lista de cores (mesmo length de items).
     `horizontal=None` decide automaticamente; passe True/False pra forçar.
-    `sort_by_value=False` preserva ordem original de items (útil quando entrada já vem ordenada).
+    `sort_by_value=False` preserva ordem original de items.
+    `hover_texts` (opcional): se fornecido, sobrescreve o hover padrão por item.
+        Deve ter mesmo comprimento de `dados` ANTES do truncamento por max_categorias.
     """
     if isinstance(dados, dict):
         items = list(dados.items())
@@ -58,10 +63,28 @@ def bar_chart(
     if not items:
         return _empty_fig(titulo)
 
+    # Combina items + hover_texts antes de sort/truncate, pra manter alinhados
+    indexed = list(zip(range(len(items)), items, hover_texts or [None] * len(items)))
     if sort_by_value:
-        items = sorted(items, key=lambda kv: kv[1], reverse=True)
-    items = items[:max_categorias]
-    categorias = [str(k) for k, _ in items]
+        indexed.sort(key=lambda x: x[1][1], reverse=True)
+    indexed = indexed[:max_categorias]
+
+    items = [x[1] for x in indexed]
+    hovers = [x[2] for x in indexed]
+    categorias_full = [str(k) for k, _ in items]
+
+    # Trunca labels com '...' se solicitado, e usa nome completo no hover.
+    if truncate_labels and truncate_labels > 0:
+        categorias = [
+            (c[: truncate_labels - 1] + "…") if len(c) > truncate_labels else c
+            for c in categorias_full
+        ]
+        # Se não havia hover customizado, usa o nome completo
+        if not any(hovers):
+            hovers = [f"<b>{c}</b>" for c in categorias_full]
+    else:
+        categorias = categorias_full
+
     quantidades = [v for _, v in items]
     total = sum(quantidades) or 1
     percentuais = [f"{(q / total) * 100:.1f}%" for q in quantidades] if show_percent else [str(q) for q in quantidades]
@@ -82,31 +105,47 @@ def bar_chart(
         qty_rev = list(reversed(quantidades))
         pct_rev = list(reversed(percentuais))
         cor_rev = list(reversed(bar_color)) if isinstance(bar_color, list) else bar_color
+        hov_rev = list(reversed(hovers)) if any(hovers) else None
 
-        trace = go.Bar(
-            x=qty_rev, y=cat_rev, orientation="h",
-            text=pct_rev, textposition="outside",
-            marker_color=cor_rev,
-            hovertemplate="<b>%{y}</b><br>Quantidade: %{x}<br>%{text}<extra></extra>",
-        )
+        if hov_rev is not None:
+            trace = go.Bar(
+                x=qty_rev, y=cat_rev, orientation="h",
+                text=pct_rev, textposition="outside",
+                marker_color=cor_rev,
+                customdata=hov_rev,
+                hovertemplate="%{customdata}<br>Quantidade: %{x}<br>%{text}<extra></extra>",
+            )
+        else:
+            trace = go.Bar(
+                x=qty_rev, y=cat_rev, orientation="h",
+                text=pct_rev, textposition="outside",
+                marker_color=cor_rev,
+                hovertemplate="<b>%{y}</b><br>Quantidade: %{x}<br>%{text}<extra></extra>",
+            )
 
-        margem_esq = min(300, max_len * 8)
+        # Após truncar, max_len reflete o tamanho exibido. Margens caem.
+        eff_max_len = max(len(c) for c in categorias)
+        margem_esq = min(300, eff_max_len * 8)
         valor_max = max(quantidades)
-        if max_len > 60:
+        if eff_max_len > 60:
             margem_dir = 160
         elif valor_max > 500:
             margem_dir = 140
         else:
             margem_dir = 120
 
-        if valor_max <= 10:
-            mult = 2.0
-        elif valor_max <= 30:
-            mult = 1.5
-        elif valor_max <= 100:
-            mult = 1.35
+        if x_max is not None:
+            x_range = [0, x_max]
         else:
-            mult = 1.25
+            if valor_max <= 10:
+                mult = 2.0
+            elif valor_max <= 30:
+                mult = 1.5
+            elif valor_max <= 100:
+                mult = 1.35
+            else:
+                mult = 1.25
+            x_range = [0, valor_max * mult]
 
         altura_calc = max(height, len(categorias) * 30 + 100)
         fig = go.Figure(trace)
@@ -114,7 +153,7 @@ def bar_chart(
             **layout_defaults,
             height=altura_calc,
             margin={"t": 60, "b": 50, "l": margem_esq, "r": margem_dir},
-            xaxis={"title": "Quantidade", "range": [0, valor_max * mult],
+            xaxis={"title": "Quantidade", "range": x_range,
                    "gridcolor": theme.BORDER, "automargin": True},
             yaxis={"automargin": True, "tickfont": {"size": 11}, "ticksuffix": "  "},
             bargap=0.3,
@@ -230,10 +269,25 @@ def sentiment_bar(distribuicao: dict[str, int], titulo: str = "Análise de Senti
 
 
 def apropriacao_bar(dados: dict[str, int]) -> go.Figure:
-    """Bar chart para tema de apropriação. A/E/N reclassificados pra rótulos descritivos."""
+    """Bar chart para tema de apropriação. A/E/N reclassificados pra rótulos descritivos.
+
+    Cores semânticas: verde p/ Maior (apropriação positiva), vermelho p/ Menor
+    (apropriação negativa), amarelo p/ Não Avaliado.
+    """
     mapping = {"A": "Maior (A)", "E": "Menor (E)", "N": "Não Avaliado (N)"}
-    dados_rotulados = {mapping.get(k, k): v for k, v in dados.items()}
-    return bar_chart(dados_rotulados, titulo="", color=theme.PRIMARY)
+    color_map = {
+        "Maior (A)": theme.SUCCESS,
+        "Menor (E)": theme.DANGER,
+        "Não Avaliado (N)": theme.WARNING,
+    }
+    # Pré-ordena por valor desc pra alinhar com bar_chart (sort_by_value=False)
+    items = sorted(
+        ((mapping.get(k, k), v) for k, v in dados.items()),
+        key=lambda kv: kv[1],
+        reverse=True,
+    )
+    cores = [color_map.get(label, theme.PRIMARY) for label, _ in items]
+    return bar_chart(items, titulo="", color=cores, sort_by_value=False)
 
 
 def choropleth_brasil(

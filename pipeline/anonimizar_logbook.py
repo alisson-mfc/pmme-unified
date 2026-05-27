@@ -154,6 +154,16 @@ def anonymize(
 
         out_records.append(dst)
 
+    # Enriquece com cidade/UF derivados dos códigos IBGE.
+    # Esses campos passam a fazer parte da base pseudonimizada (não são sensíveis).
+    try:
+        from pipeline.ibge_lookup import enrich_records
+        enrich_records(out_records, verbose=False)
+    except Exception as e:
+        # Se IBGE API estiver fora, segue sem enriquecimento — pior cenário
+        # é os tooltips ficarem sem cidade/UF.
+        print(f"      [aviso] enriquecimento IBGE falhou: {e}")
+
     if has_records:
         out: dict | list = {**data, "RECORDS": out_records}
     else:

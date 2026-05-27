@@ -44,6 +44,15 @@ if sys.platform == "win32":
     except (AttributeError, ValueError):
         sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 
+# Carrega .env localmente (ANTHROPIC_API_KEY, GITHUB_TOKEN, etc.)
+# override=True garante que valores do .env tenham prioridade sobre env vars
+# existentes na shell (importante quando há vars vazias setadas em sessões anteriores).
+try:
+    from dotenv import load_dotenv
+    load_dotenv(override=True)
+except ImportError:
+    pass
+
 from pipeline import (  # noqa: E402
     analise_logbook,
     analise_matriculas,
@@ -326,6 +335,12 @@ def main() -> int:
         log("modo dry-run — nenhuma chamada Claude será feita", level="info")
     if args.force:
         log("modo force — cache será ignorado", level="info")
+
+    if not args.dry_run and not args.no_analyze:
+        if not os.environ.get("ANTHROPIC_API_KEY"):
+            log("ATENÇÃO: ANTHROPIC_API_KEY não configurada — Claude vai usar "
+                "fallback (resumos curtos). Coloque a chave no .env e rode de novo.",
+                level="warn")
 
     summary: dict = {}
 

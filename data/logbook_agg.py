@@ -136,9 +136,30 @@ def aggregate_for(
             temporal_count[f"{dt.month}/{dt.year}"] += 1
     temporal = sorted(temporal_count.items(), key=lambda kv: _month_key_sort(kv[0]))
 
-    instituicoes_top = Counter(
-        r.get("sigla_formadora") or "Não informado" for r in rec
-    ).most_common(10)
+    # Top instituições: além de contar por sigla, guarda metadados pro tooltip
+    # (nome completo, cidade, UF). Uma sigla → um conjunto de metadados.
+    inst_meta: dict[str, dict] = {}
+    inst_count: Counter = Counter()
+    for r in rec:
+        s = r.get("sigla_formadora") or "Não informado"
+        inst_count[s] += 1
+        if s not in inst_meta:
+            inst_meta[s] = {
+                "nome": r.get("instituicao_formadora") or s,
+                "cidade": r.get("cidade_formadora") or "",
+                "uf_sigla": r.get("uf_formadora_sigla") or "",
+            }
+    instituicoes_top = inst_count.most_common(10)
+    instituicoes_top_hover = []
+    for sigla, _ in instituicoes_top:
+        m = inst_meta.get(sigla, {})
+        nome = m.get("nome", sigla)
+        cidade = m.get("cidade", "")
+        uf = m.get("uf_sigla", "")
+        local = f"{cidade}/{uf}" if cidade and uf else (cidade or uf)
+        instituicoes_top_hover.append(
+            f"<b>{nome}</b><br>{local}" if local else f"<b>{nome}</b>"
+        )
 
     niveis_count: Counter = Counter()
     for r in rec:
@@ -164,7 +185,27 @@ def aggregate_for(
     procedimentos_top = proc_counter.most_common(10)
 
     cids_top = Counter(r.get("no_cid") for r in rec if r.get("no_cid")).most_common(10)
-    hospitais_top = Counter(r.get("hospital_atuacao") or "Não informado" for r in rec).most_common(10)
+    # Top hospitais de atuação: igual instituições, monta metadata pro hover
+    hosp_meta: dict[str, dict] = {}
+    hosp_count: Counter = Counter()
+    for r in rec:
+        h = r.get("hospital_atuacao") or "Não informado"
+        hosp_count[h] += 1
+        if h not in hosp_meta:
+            hosp_meta[h] = {
+                "cidade": r.get("cidade_atuacao") or "",
+                "uf_sigla": r.get("uf_atuacao_sigla") or "",
+            }
+    hospitais_top = hosp_count.most_common(10)
+    hospitais_top_hover = []
+    for nome, _ in hospitais_top:
+        m = hosp_meta.get(nome, {})
+        cidade = m.get("cidade", "")
+        uf = m.get("uf_sigla", "")
+        local = f"{cidade}/{uf}" if cidade and uf else (cidade or uf)
+        hospitais_top_hover.append(
+            f"<b>{nome}</b><br>{local}" if local else f"<b>{nome}</b>"
+        )
     cursos_top = Counter(r.get("curso_aprimoramento") or "Não informado" for r in rec).most_common(10)
 
     # --- DIAGNÓSTICA ---
@@ -229,6 +270,25 @@ def aggregate_for(
         if r.get("dificuldade") and r["dificuldade"] >= 3 and r.get("no_cid")
     ).most_common(10)
 
+    # --- GEOGRAFIA ---
+    # Contagem de registros por estado (sigla → count) e por município (sigla_uf → cidade → count)
+    geo_estados: Counter = Counter()
+    geo_municipios: dict[str, Counter] = {}
+    geo_municipios_ibge: dict[str, Counter] = {}  # sigla_uf → ibge_6dig → count
+    for r in rec:
+        sigla = r.get("uf_atuacao_sigla")
+        cidade = r.get("cidade_atuacao")
+        ibge = r.get("ibge_atuacao")
+        if sigla:
+            geo_estados[sigla] += 1
+            if cidade:
+                geo_municipios.setdefault(sigla, Counter())[cidade] += 1
+            if ibge:
+                geo_municipios_ibge.setdefault(sigla, Counter())[str(ibge)[:6]] += 1
+    # Converte pra estrutura serializável (dict normais)
+    geo_municipios_dict = {s: dict(c) for s, c in geo_municipios.items()}
+    geo_municipios_ibge_dict = {s: dict(c) for s, c in geo_municipios_ibge.items()}
+
     # --- PREDITIVA (dados derivados — combinação com claude analysis vem na página) ---
     proc_nl: Counter = Counter()
     for r in rec:
@@ -250,12 +310,18 @@ def aggregate_for(
         # Visão Geral
         "temporal": temporal,
         "instituicoes_top": instituicoes_top,
+        "instituicoes_top_hover": instituicoes_top_hover,
         "niveis": niveis,
         "dificuldade": dificuldade,
         "procedimentos_top": procedimentos_top,
         "cids_top": cids_top,
         "hospitais_top": hospitais_top,
+        "hospitais_top_hover": hospitais_top_hover,
         "cursos_top": cursos_top,
+        # Geografia
+        "geo_estados": dict(geo_estados),
+        "geo_municipios": geo_municipios_dict,
+        "geo_municipios_ibge": geo_municipios_ibge_dict,
         # Diagnóstica
         "progressao": progressao,
         "heatmap": heatmap,

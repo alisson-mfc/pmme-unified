@@ -249,12 +249,13 @@ def step_push(message: str | None = None) -> dict:
         log(f"pull com rebase falhou: {err}", level="warn")
         return {"status": "abort-pull-failed"}
 
-    # Copiar arquivos
+    # Copiar arquivos. Logbook é grande (>100MB pode estourar o limite do GitHub),
+    # então gzipamos pra ~30% do tamanho. Loader sabe descompactar transparente.
+    import gzip
     files = [
         (PROC_MAT, PMME_DADOS / "dados_anonimizados.json"),
         (PROC_MAT.with_suffix(".meta.json"),
          PMME_DADOS / "dados_anonimizados.meta.json"),
-        (PROC_LOG, PMME_DADOS / "logbook_pseudonimizados.json"),
         (PROC_LOG.with_suffix(".meta.json"),
          PMME_DADOS / "logbook_pseudonimizados.meta.json"),
         (PROC_ML, PMME_DADOS / "predicoes_ml_dificuldade.json"),
@@ -265,6 +266,19 @@ def step_push(message: str | None = None) -> dict:
         if src.exists():
             shutil.copy2(src, dst)
             log(f"copy {src.name} → pmme-dados/{dst.name}")
+
+    # Logbook: comprimir com gzip antes de copiar pra ficar abaixo do limite do GitHub.
+    if PROC_LOG.exists():
+        old_uncompressed = PMME_DADOS / "logbook_pseudonimizados.json"
+        if old_uncompressed.exists():
+            old_uncompressed.unlink()  # remove versão sem compressão se existir
+        dst_gz = PMME_DADOS / "logbook_pseudonimizados.json.gz"
+        with PROC_LOG.open("rb") as f_in:
+            with gzip.open(dst_gz, "wb", compresslevel=6) as f_out:
+                shutil.copyfileobj(f_in, f_out, length=1024 * 1024)
+        size_mb = dst_gz.stat().st_size / (1024 * 1024)
+        log(f"gzip+copy logbook_pseudonimizados.json → "
+            f"pmme-dados/logbook_pseudonimizados.json.gz ({size_mb:.1f} MB)")
 
     # Sincronizar pasta analises/ (nova estrutura)
     if ANALISES_DIR.exists() and any(ANALISES_DIR.iterdir()):

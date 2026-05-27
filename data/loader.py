@@ -22,10 +22,12 @@ Cache: lru_cache em todas as funções públicas. Use refresh_all() pra invalida
 from __future__ import annotations
 
 import base64
+import gzip
 import json
 import os
 from datetime import datetime
 from functools import lru_cache
+from io import BytesIO
 from pathlib import Path
 from typing import Any
 
@@ -83,17 +85,42 @@ def _fetch_remote_bytes(path: str) -> bytes | None:
     return None
 
 
+def _decode_maybe_gz(data: bytes, is_gz: bool) -> Any | None:
+    """Decodifica bytes JSON. Se for .gz, descomprime antes."""
+    try:
+        if is_gz:
+            data = gzip.decompress(data)
+        return json.loads(data.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError, OSError):
+        return None
+
+
 def _fetch_remote_json(path: str) -> Any | None:
+    """Tenta buscar `path.gz` primeiro (mais leve), fallback pra `path`."""
+    # Tenta versão comprimida primeiro
+    if not path.endswith(".gz"):
+        gz_data = _fetch_remote_bytes(path + ".gz")
+        if gz_data is not None:
+            decoded = _decode_maybe_gz(gz_data, is_gz=True)
+            if decoded is not None:
+                return decoded
+    # Versão não-comprimida
     data = _fetch_remote_bytes(path)
     if data is None:
         return None
-    try:
-        return json.loads(data.decode("utf-8"))
-    except (UnicodeDecodeError, json.JSONDecodeError):
-        return None
+    return _decode_maybe_gz(data, is_gz=path.endswith(".gz"))
 
 
 def _read_local_json(path: Path) -> Any | None:
+    """Lê JSON local. Tenta `path.gz` primeiro se existir, fallback pra `path`."""
+    if path.suffix == ".json":
+        gz_path = path.with_suffix(".json.gz")
+        if gz_path.exists():
+            try:
+                with gzip.open(gz_path, "rt", encoding="utf-8") as f:
+                    return json.load(f)
+            except (OSError, json.JSONDecodeError):
+                pass
     if not path.exists():
         return None
     try:

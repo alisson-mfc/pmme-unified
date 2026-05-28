@@ -42,6 +42,62 @@ CURSO_PREFIX_RE = re.compile(r"^(?:\d+\.?\s*[\.\-]?\s*)?Aprimoramento em\s*", re
 
 
 # ----------------------------------------------------------------------
+# NORMALIZAÇÕES DE BANCO DE DADOS — correções comuns na base
+# ----------------------------------------------------------------------
+# Chaves em lowercase pra comparação case-insensitive; valores são a forma final.
+RACA_MAP = {
+    "marrom": "Parda",
+    "branco": "Branca",
+}
+
+SEXO_MAP = {
+    "macho": "Masculino",
+    "feminina": "Feminino",
+    "fêmea": "Feminino",
+    "femea": "Feminino",
+}
+
+ESTADO_CIVIL_MAP = {
+    "união estabelecimento": "União Estável",
+    "uniao estabelecimento": "União Estável",
+    "solteiro": "Solteiro (a)",
+    "casado": "Casado (a)",
+}
+
+IDENT_GENERO_MAP = {
+    "homen cisgênero": "Homem cisgênero",
+    "homen cisgenero": "Homem cisgênero",
+}
+
+TIT_ESP_AMB_MAP = {
+    "tenho 1 grau de especialista": "Possuo 1(um) título de especialista",
+}
+
+
+def _normalize_value(value, mapping: dict[str, str]):
+    """Aplica mapa de normalização case-insensitive. Retorna (novo_valor, mudou_bool)."""
+    if not isinstance(value, str):
+        return value, False
+    key = value.strip().lower()
+    if key in mapping:
+        new = mapping[key]
+        return new, new != value
+    return value, False
+
+
+# Normaliza espaçamento em "Possuo N(N palavra)substantivo" pra "Possuo N(N palavra) substantivo".
+# Também remove espaço extra entre dígito e parêntese: "Possuo 2 (duas)" → "Possuo 2(duas)".
+def _normalize_residencias_espacamento(s: str) -> str:
+    if not isinstance(s, str):
+        return s
+    # "2 (duas)" → "2(duas)"
+    s = re.sub(r"(\d)\s+\(", r"\1(", s)
+    # ")residência" → ") residência"  (qualquer letra após `)`)
+    s = re.sub(r"\)([A-Za-zÀ-ÿ])", r") \1", s)
+    return s
+
+
+# ----------------------------------------------------------------------
 # Helpers
 # ----------------------------------------------------------------------
 def _anonymize_value(key: str, value: Any) -> Any:
@@ -101,22 +157,34 @@ def _process_entry(entry: dict) -> tuple[dict, int]:
         new["cpf"] = _anonymize_value("cpf", new["cpf"])
         altered += 1
 
-    # 2. info_pessoais (com correções de raça e sexo)
+    # 2. info_pessoais (normalizações + anonimização)
     if new.get("info_pessoais"):
         orig_is_str = isinstance(new["info_pessoais"], str)
         parsed = _parse_nested(new["info_pessoais"])
         if parsed is not None:
-            # Correção raça
-            raca = parsed.get("raca_ds")
-            if isinstance(raca, str) and raca.strip().lower() == "marrom":
-                parsed["raca_ds"] = "Parda"
+            # --- Normalizações de valores conhecidos (banco com inconsistências) ---
+            # raca_ds: marrom→Parda, Branco→Branca
+            new_v, changed = _normalize_value(parsed.get("raca_ds"), RACA_MAP)
+            if changed:
+                parsed["raca_ds"] = new_v
                 altered += 1
-            # Correção sexo
-            sexo = parsed.get("sexo_ds")
-            if isinstance(sexo, str) and sexo.strip().lower() == "macho":
-                parsed["sexo_ds"] = "Masculino"
+            # sexo_ds: macho→Masculino, feminina/fêmea→Feminino
+            new_v, changed = _normalize_value(parsed.get("sexo_ds"), SEXO_MAP)
+            if changed:
+                parsed["sexo_ds"] = new_v
                 altered += 1
-            # Anonimização padrão
+            # estado_civil_ds: União Estabelecimento→União Estável, Solteiro→Solteiro (a), Casado→Casado (a)
+            new_v, changed = _normalize_value(parsed.get("estado_civil_ds"), ESTADO_CIVIL_MAP)
+            if changed:
+                parsed["estado_civil_ds"] = new_v
+                altered += 1
+            # ident_genero_ds: Homen cisgênero→Homem cisgênero
+            new_v, changed = _normalize_value(parsed.get("ident_genero_ds"), IDENT_GENERO_MAP)
+            if changed:
+                parsed["ident_genero_ds"] = new_v
+                altered += 1
+
+            # --- Anonimização padrão ---
             for f in INFO_PESSOAIS_FIELDS:
                 if parsed.get(f):
                     parsed[f] = _anonymize_value(f, parsed[f])
@@ -150,13 +218,26 @@ def _process_entry(entry: dict) -> tuple[dict, int]:
         orig_is_str = isinstance(new["listas_selecao"], str)
         parsed = _parse_nested(new["listas_selecao"])
         if parsed is not None:
-            # rm_rec_cnrm_ds: "Tenho..." → "Possuo..."
+            # rm_rec_cnrm_ds:
+            #   1) "Tenho..." → "Possuo..."
+            #   2) "Possuo 1(uma)residência" → "Possuo 1(uma) residência"  (espaço após `)`)
+            #   3) "Possuo 2 (duas)" → "Possuo 2(duas)"                    (sem espaço entre dígito e `(`)
             rm = parsed.get("rm_rec_cnrm_ds")
-            if isinstance(rm, str) and re.match(r"^Tenho", rm, re.IGNORECASE):
-                new_rm = re.sub(r"^Tenho", "Possuo", rm, count=1, flags=re.IGNORECASE)
+            if isinstance(rm, str):
+                new_rm = rm
+                if re.match(r"^Tenho", new_rm, re.IGNORECASE):
+                    new_rm = re.sub(r"^Tenho", "Possuo", new_rm, count=1, flags=re.IGNORECASE)
+                new_rm = _normalize_residencias_espacamento(new_rm)
                 if new_rm != rm:
                     parsed["rm_rec_cnrm_ds"] = new_rm
                     altered += 1
+
+            # tit_esp_amb_ds: "Tenho 1 grau de especialista" → "Possuo 1(um) título de especialista"
+            tit = parsed.get("tit_esp_amb_ds")
+            new_v, changed = _normalize_value(tit, TIT_ESP_AMB_MAP)
+            if changed:
+                parsed["tit_esp_amb_ds"] = new_v
+                altered += 1
 
             # Vaga principal — limpar curso.nome
             vp = parsed.get("vaga_principal_jdata")

@@ -152,7 +152,7 @@ def bar_chart(
         fig.update_layout(
             **layout_defaults,
             height=altura_calc,
-            margin={"t": 60, "b": 50, "l": margem_esq, "r": margem_dir},
+            margin={"t": 20, "b": 50, "l": margem_esq, "r": margem_dir},
             xaxis={"title": "Quantidade", "range": x_range,
                    "gridcolor": theme.BORDER, "automargin": True},
             yaxis={"automargin": True, "tickfont": {"size": 11}, "ticksuffix": "  "},
@@ -169,7 +169,7 @@ def bar_chart(
         fig.update_layout(
             **layout_defaults,
             height=height,
-            margin={"t": 60, "b": 80, "l": 60, "r": 40},
+            margin={"t": 20, "b": 80, "l": 60, "r": 40},
             yaxis={"title": "Quantidade", "range": [0, max(quantidades) * 1.25],
                    "gridcolor": theme.BORDER},
             xaxis={"automargin": True, "tickangle": -20, "tickfont": {"size": 11}},
@@ -191,10 +191,19 @@ def histogram(valores: list[float], titulo: str, height: int = 420) -> go.Figure
     fig = go.Figure(
         go.Histogram(x=valores, nbinsx=20, marker_color=theme.ACCENT, opacity=0.85)
     )
+
+    # Posicionar labels: o MAIOR valor à direita (xanchor=left), o MENOR à esquerda
+    # (xanchor=right). Assim as labels se afastam mesmo quando os valores estão
+    # próximos, evitando sobreposição.
+    if media >= mediana:
+        anchor_media, anchor_mediana = "left", "right"
+    else:
+        anchor_media, anchor_mediana = "right", "left"
+
     fig.update_layout(
         **theme.plotly_layout_defaults(),
         height=height,
-        margin={"t": 60, "b": 50, "l": 60, "r": 40},
+        margin={"t": 20, "b": 50, "l": 60, "r": 40},
         shapes=[
             {"type": "line", "x0": media, "x1": media, "y0": 0, "y1": 1, "yref": "paper",
              "line": {"color": theme.DANGER, "width": 2, "dash": "dash"}},
@@ -202,11 +211,11 @@ def histogram(valores: list[float], titulo: str, height: int = 420) -> go.Figure
              "line": {"color": theme.PRIMARY, "width": 2, "dash": "dash"}},
         ],
         annotations=[
-            {"x": media, "y": 1, "yref": "paper", "text": f"Média: {media:.1f}",
-             "showarrow": False, "xanchor": "right", "yanchor": "top",
+            {"x": media, "y": 1, "yref": "paper", "text": f" Média: {media:.1f} ",
+             "showarrow": False, "xanchor": anchor_media, "yanchor": "top",
              "font": {"color": theme.DANGER, "size": 12}},
-            {"x": mediana, "y": 1, "yref": "paper", "text": f"Mediana: {mediana:.1f}",
-             "showarrow": False, "xanchor": "left", "yanchor": "top",
+            {"x": mediana, "y": 1, "yref": "paper", "text": f" Mediana: {mediana:.1f} ",
+             "showarrow": False, "xanchor": anchor_mediana, "yanchor": "top",
              "font": {"color": theme.PRIMARY, "size": 12}},
         ],
     )
@@ -236,7 +245,7 @@ def line_regioes(pontos: list[dict], titulo: str = "Distribuição Regional por 
     fig.update_layout(
         **theme.plotly_layout_defaults(),
         height=500,
-        margin={"t": 60, "b": 50, "l": 60, "r": 40},
+        margin={"t": 20, "b": 50, "l": 60, "r": 40},
         xaxis={"title": "Momento"},
         yaxis={"title": "Quantidade"},
     )
@@ -261,7 +270,7 @@ def sentiment_bar(distribuicao: dict[str, int], titulo: str = "Análise de Senti
     fig.update_layout(
         **theme.plotly_layout_defaults(),
         height=380,
-        margin={"t": 60, "b": 50, "l": 50, "r": 40},
+        margin={"t": 20, "b": 50, "l": 50, "r": 40},
         showlegend=False,
         yaxis={"range": [0, max(valores) * 1.25 if valores else 1]},
     )
@@ -361,7 +370,7 @@ def line_chart(
     layout = dict(
         **theme.plotly_layout_defaults(),
         height=height,
-        margin={"t": 30, "b": 50, "l": 60, "r": 40},
+        margin={"t": 20, "b": 50, "l": 60, "r": 40},
         xaxis={"automargin": True, "tickangle": -20},
         yaxis={"title": y_title, "gridcolor": theme.BORDER, "rangemode": "tozero"},
         showlegend=False,
@@ -403,28 +412,44 @@ def dual_axis_bar(
     series: list[dict],
     titulo: str = "",
     height: int = 440,
+    hover_texts: list[str] | None = None,
 ) -> go.Figure:
     """Bar chart com dois eixos Y. `series` é lista de dicts:
         {name, values, axis ('y' ou 'y2'), color}
+
+    `hover_texts` (opcional): lista de string HTML por categoria — substitui o
+    cabeçalho `<b>%{x}</b>` do hover. Útil pra mostrar nome completo + cidade/UF
+    no lugar da sigla.
     """
     if not categorias or not series:
         return _empty_fig(titulo)
 
     fig = go.Figure()
     for s in series:
-        fig.add_trace(go.Bar(
-            x=categorias,
-            y=s["values"],
-            name=s["name"],
-            marker_color=s.get("color", theme.ACCENT),
-            yaxis=s.get("axis", "y"),
-            hovertemplate=f"<b>%{{x}}</b><br>{s['name']}: %{{y:.2f}}<extra></extra>",
-        ))
+        if hover_texts:
+            fig.add_trace(go.Bar(
+                x=categorias,
+                y=s["values"],
+                name=s["name"],
+                marker_color=s.get("color", theme.ACCENT),
+                yaxis=s.get("axis", "y"),
+                customdata=hover_texts,
+                hovertemplate=f"%{{customdata}}<br>{s['name']}: %{{y:.2f}}<extra></extra>",
+            ))
+        else:
+            fig.add_trace(go.Bar(
+                x=categorias,
+                y=s["values"],
+                name=s["name"],
+                marker_color=s.get("color", theme.ACCENT),
+                yaxis=s.get("axis", "y"),
+                hovertemplate=f"<b>%{{x}}</b><br>{s['name']}: %{{y:.2f}}<extra></extra>",
+            ))
 
     fig.update_layout(
         **theme.plotly_layout_defaults(),
         height=height,
-        margin={"t": 30, "b": 80, "l": 60, "r": 60},
+        margin={"t": 40, "b": 80, "l": 60, "r": 60},
         xaxis={"automargin": True, "tickangle": -30, "tickfont": {"size": 10}},
         yaxis={"title": "Volume de Procedimentos", "gridcolor": theme.BORDER, "side": "left"},
         yaxis2={
@@ -432,6 +457,6 @@ def dual_axis_bar(
             "range": [0, 5], "showgrid": False,
         },
         barmode="group",
-        legend={"orientation": "h", "y": 1.08, "x": 0.5, "xanchor": "center"},
+        legend={"orientation": "h", "y": 1.12, "x": 0.5, "xanchor": "center"},
     )
     return fig

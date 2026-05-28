@@ -592,11 +592,15 @@ def _update_visao_geral(rede, di, df, curso, inst, hosp):
                          horizontal=False, color=theme.PRIMARY),
         charts.bar_chart(dificuldade_items, titulo="", sort_by_value=False, show_percent=False,
                          horizontal=False, color=dif_cores),
-        charts.bar_chart(agg["procedimentos_top"], titulo="", horizontal=True, sort_by_value=False),
-        charts.bar_chart(agg["cids_top"], titulo="", horizontal=True, sort_by_value=False),
+        charts.bar_chart(agg["procedimentos_top"], titulo="", horizontal=True,
+                         sort_by_value=False, truncate_labels=40),
+        charts.bar_chart(agg["cids_top"], titulo="", horizontal=True,
+                         sort_by_value=False, truncate_labels=40),
         charts.bar_chart(agg["hospitais_top"], titulo="", horizontal=True,
-                         sort_by_value=False, hover_texts=agg.get("hospitais_top_hover")),
-        charts.bar_chart(agg["cursos_top"], titulo="", horizontal=True, sort_by_value=False),
+                         sort_by_value=False, hover_texts=agg.get("hospitais_top_hover"),
+                         truncate_labels=40),
+        charts.bar_chart(agg["cursos_top"], titulo="", horizontal=True,
+                         sort_by_value=False, truncate_labels=40),
     )
 
 
@@ -656,6 +660,7 @@ def _update_diagnostica(rede, di, df, curso, inst, hosp):
     inst_data = agg["institucional"]
     if inst_data:
         cats = [x["sigla"] for x in inst_data]
+        hover_inst = [x.get("hover", f"<b>{x['sigla']}</b>") for x in inst_data]
         institucional_fig = charts.dual_axis_bar(
             cats,
             [
@@ -669,6 +674,7 @@ def _update_diagnostica(rede, di, df, curso, inst, hosp):
                  "values": [round(x["media_nivel"], 2) for x in inst_data],
                  "axis": "y2", "color": "#10b981"},
             ],
+            hover_texts=hover_inst,
         )
     else:
         institucional_fig = charts._empty_fig()
@@ -680,10 +686,11 @@ def _update_diagnostica(rede, di, df, curso, inst, hosp):
                           y_range=(0, 5), height=380),
         _build_heatmap_table(agg["heatmap"]),
         charts.bar_chart(curso_dif_data, titulo="", horizontal=True,
-                         sort_by_value=False, show_percent=False, color="#3498db"),
+                         sort_by_value=False, show_percent=False, color="#3498db",
+                         truncate_labels=40),
         institucional_fig,
         charts.bar_chart(agg["cids_alta_complexidade"], titulo="", horizontal=True,
-                         sort_by_value=False, color="#ec4899"),
+                         sort_by_value=False, color="#ec4899", truncate_labels=40),
     )
 
 

@@ -250,6 +250,7 @@ def aggregate_for(
     )
 
     inst_stats: dict[str, dict[str, float]] = {}
+    inst_meta_diag: dict[str, dict] = {}  # sigla → {nome, cidade, uf_sigla}
     for r in rec:
         i = r.get("sigla_formadora") or "Não informado"
         s = inst_stats.setdefault(i, {"vol": 0, "sd": 0.0, "cd": 0, "sn": 0.0, "cn": 0})
@@ -260,16 +261,30 @@ def aggregate_for(
         if r.get("nivel_desenvolvimento"):
             s["sn"] += r["nivel_desenvolvimento"]
             s["cn"] += 1
+        if i not in inst_meta_diag:
+            inst_meta_diag[i] = {
+                "nome": r.get("instituicao_formadora") or i,
+                "cidade": r.get("cidade_formadora") or "",
+                "uf_sigla": r.get("uf_formadora_sigla") or "",
+            }
     top_inst = sorted(inst_stats.items(), key=lambda kv: kv[1]["vol"], reverse=True)[:10]
-    institucional = [
-        {
+    institucional = []
+    for i, s in top_inst:
+        m = inst_meta_diag.get(i, {})
+        nome = m.get("nome", i)
+        cidade = m.get("cidade", "")
+        uf = m.get("uf_sigla", "")
+        local = f"{cidade}/{uf}" if cidade and uf else (cidade or uf)
+        institucional.append({
             "sigla": i,
+            "nome": nome,
+            "cidade": cidade,
+            "uf_sigla": uf,
+            "hover": f"<b>{nome}</b><br>{local}" if local else f"<b>{nome}</b>",
             "volume": int(s["vol"]),
             "media_dificuldade": s["sd"] / s["cd"] if s["cd"] else 0,
             "media_nivel": s["sn"] / s["cn"] if s["cn"] else 0,
-        }
-        for i, s in top_inst
-    ]
+        })
 
     cids_alta_complexidade = Counter(
         r.get("no_cid")

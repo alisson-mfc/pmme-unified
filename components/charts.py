@@ -100,28 +100,29 @@ def bar_chart(
         bar_color = color or theme.ACCENT
     layout_defaults = theme.plotly_layout_defaults()
 
+    # IMPORTANTE: usar posições numéricas no eixo categórico (com ticktext mostrando
+    # os rótulos). Isso evita colapso/empilhamento quando truncate_labels cria duplicatas
+    # — ex.: 3 CIDs começando com "Exame especial de rastreamento de neopl..." virariam
+    # 1 barra empilhada se usássemos a string como categoria.
     if horizontal:
         cat_rev = list(reversed(categorias))
+        full_rev = list(reversed(categorias_full))
         qty_rev = list(reversed(quantidades))
         pct_rev = list(reversed(percentuais))
         cor_rev = list(reversed(bar_color)) if isinstance(bar_color, list) else bar_color
         hov_rev = list(reversed(hovers)) if any(hovers) else None
 
-        if hov_rev is not None:
-            trace = go.Bar(
-                x=qty_rev, y=cat_rev, orientation="h",
-                text=pct_rev, textposition="outside",
-                marker_color=cor_rev,
-                customdata=hov_rev,
-                hovertemplate="%{customdata}<br>Quantidade: %{x}<br>%{text}<extra></extra>",
-            )
-        else:
-            trace = go.Bar(
-                x=qty_rev, y=cat_rev, orientation="h",
-                text=pct_rev, textposition="outside",
-                marker_color=cor_rev,
-                hovertemplate="<b>%{y}</b><br>Quantidade: %{x}<br>%{text}<extra></extra>",
-            )
+        y_positions = list(range(len(cat_rev)))
+        # customdata: hover_texts explícitos OU o nome completo como fallback
+        custom = hov_rev if hov_rev is not None else [f"<b>{c}</b>" for c in full_rev]
+
+        trace = go.Bar(
+            x=qty_rev, y=y_positions, orientation="h",
+            text=pct_rev, textposition="outside",
+            marker_color=cor_rev,
+            customdata=custom,
+            hovertemplate="%{customdata}<br>Quantidade: %{x}<br>%{text}<extra></extra>",
+        )
 
         # Após truncar, max_len reflete o tamanho exibido. Margens caem.
         eff_max_len = max(len(c) for c in categorias)
@@ -155,15 +156,24 @@ def bar_chart(
             margin={"t": 20, "b": 50, "l": margem_esq, "r": margem_dir},
             xaxis={"title": "Quantidade", "range": x_range,
                    "gridcolor": theme.BORDER, "automargin": True},
-            yaxis={"automargin": True, "tickfont": {"size": 11}, "ticksuffix": "  "},
+            yaxis={
+                "automargin": True, "tickfont": {"size": 11}, "ticksuffix": "  ",
+                "tickmode": "array",
+                "tickvals": y_positions,
+                "ticktext": cat_rev,
+            },
             bargap=0.3,
         )
     else:
+        x_positions = list(range(len(categorias)))
+        custom = hovers if any(hovers) else [f"<b>{c}</b>" for c in categorias_full]
+
         trace = go.Bar(
-            x=categorias, y=quantidades,
+            x=x_positions, y=quantidades,
             text=percentuais, textposition="outside",
             marker_color=bar_color,
-            hovertemplate="<b>%{x}</b><br>Quantidade: %{y}<br>%{text}<extra></extra>",
+            customdata=custom,
+            hovertemplate="%{customdata}<br>Quantidade: %{y}<br>%{text}<extra></extra>",
         )
         fig = go.Figure(trace)
         fig.update_layout(
@@ -172,7 +182,12 @@ def bar_chart(
             margin={"t": 20, "b": 80, "l": 60, "r": 40},
             yaxis={"title": "Quantidade", "range": [0, max(quantidades) * 1.25],
                    "gridcolor": theme.BORDER},
-            xaxis={"automargin": True, "tickangle": -20, "tickfont": {"size": 11}},
+            xaxis={
+                "automargin": True, "tickangle": -20, "tickfont": {"size": 11},
+                "tickmode": "array",
+                "tickvals": x_positions,
+                "ticktext": categorias,
+            },
         )
 
     return fig

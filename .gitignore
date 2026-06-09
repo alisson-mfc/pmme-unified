@@ -22,3 +22,6 @@ analises/*
 
 # Cache runtime de nuvens (baixado do pmme-dados sob demanda)
 assets/nuvens/
+
+# Config local do Claude Code (não commitar)
+.claude/
